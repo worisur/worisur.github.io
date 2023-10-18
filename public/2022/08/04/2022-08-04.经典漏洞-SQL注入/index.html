@@ -13,7 +13,7 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="miloo">
+  <meta name="author" content="worisur">
   <meta name="keywords" content="">
   
     <meta name="description" content="原理、类型、检测、权限提升……">
@@ -22,7 +22,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>经典漏洞-SQL注入 - miloo&#39;s blog</title>
+  <title>经典漏洞-SQL注入 - worisur&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -60,7 +60,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"imiloo.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"worisur.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -352,7 +352,7 @@
 </li>
 <li><a href="#%E5%8F%82%E8%80%83%E5%86%85%E5%AE%B9">参考内容</a></li>
 </ul>
-<h1 id="1-原理-amp-类型"><a href="#1-原理-amp-类型" class="headerlink" title="1 原理 &amp; 类型"></a>1 原理 &amp; 类型</h1><h2 id="1-1-SQL-注入原理"><a href="#1-1-SQL-注入原理" class="headerlink" title="1.1 SQL 注入原理"></a>1.1 SQL 注入原理</h2><p>基本的SQL查询语句如下所示，其中 <code>$id</code> 为提交的变量，当这个参数没有做非常严格的过滤，通过对 <code>$id</code> 的构造，数据库能输出攻击者想要获取的内容，就造成了SQL注入的漏洞。</p>
+<h1 id="1-原理-类型"><a href="#1-原理-类型" class="headerlink" title="1 原理 &amp; 类型"></a>1 原理 &amp; 类型</h1><h2 id="1-1-SQL-注入原理"><a href="#1-1-SQL-注入原理" class="headerlink" title="1.1 SQL 注入原理"></a>1.1 SQL 注入原理</h2><p>基本的SQL查询语句如下所示，其中 <code>$id</code> 为提交的变量，当这个参数没有做非常严格的过滤，通过对 <code>$id</code> 的构造，数据库能输出攻击者想要获取的内容，就造成了SQL注入的漏洞。</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> users <span class="hljs-keyword">WHERE</span> id<span class="hljs-operator">=</span><span class="hljs-string">&#x27;$id&#x27;</span> LIMIT <span class="hljs-number">0</span>,<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
 
 <blockquote>
@@ -376,7 +376,7 @@
 <li>堆叠注入：有的应用可以加入 ; 后一次执行多条语句</li>
 <li>联合查询注入：</li>
 </ul>
-<h1 id="2-检测手段"><a href="#2-检测手段" class="headerlink" title="2 检测手段"></a>2 检测手段</h1><h2 id="2-1-注入点是否存在-amp-数据类型"><a href="#2-1-注入点是否存在-amp-数据类型" class="headerlink" title="2.1 注入点是否存在 &amp; 数据类型"></a>2.1 注入点是否存在 &amp; 数据类型</h2><h3 id="2-1-1-添加单引号"><a href="#2-1-1-添加单引号" class="headerlink" title="2.1.1 添加单引号"></a>2.1.1 添加单引号</h3><p>修改参数 <code>$id</code> 的值，在其中加入单引号，将SQL查询内容不闭合，如下所示，页面可能会显示部分或者全部数据库报错内容(如果没有被过滤)，则存在注入点，且注入类型为字符型。</p>
+<h1 id="2-检测手段"><a href="#2-检测手段" class="headerlink" title="2 检测手段"></a>2 检测手段</h1><h2 id="2-1-注入点是否存在-数据类型"><a href="#2-1-注入点是否存在-数据类型" class="headerlink" title="2.1 注入点是否存在 &amp; 数据类型"></a>2.1 注入点是否存在 &amp; 数据类型</h2><h3 id="2-1-1-添加单引号"><a href="#2-1-1-添加单引号" class="headerlink" title="2.1.1 添加单引号"></a>2.1.1 添加单引号</h3><p>修改参数 <code>$id</code> 的值，在其中加入单引号，将SQL查询内容不闭合，如下所示，页面可能会显示部分或者全部数据库报错内容(如果没有被过滤)，则存在注入点，且注入类型为字符型。</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> users <span class="hljs-keyword">WHERE</span> id<span class="hljs-operator">=</span><span class="hljs-string">&#x27;$id&#x27;&#x27; LIMIT 0,1</span><br></code></pre></td></tr></table></figure>
 
 <h3 id="2-1-2-添加运算符"><a href="#2-1-2-添加运算符" class="headerlink" title="2.1.2 添加运算符"></a>2.1.2 添加运算符</h3><p>传入的参数并没有显示在报错信息中，则传入的参数前面可能没有引号包裹，于是注入的类型可能是数字型。可以通过在id后添加运算符，如-1，+2，来观察页面的内容是否会变成对应的 id 来判断是否存在注入点，此时注入类型为数字型。</p>
@@ -569,15 +569,15 @@
 <td>01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 11 12 13 14 15 16 17 18 19 1A 1B 1C 1D 1E 1F 20</td>
 </tr>
 </tbody></table>
-<h2 id="4-3-逗号过滤-x2F-拦截"><a href="#4-3-逗号过滤-x2F-拦截" class="headerlink" title="4.3 逗号过滤&#x2F;拦截"></a>4.3 逗号过滤&#x2F;拦截</h2><p>拦截逗号后，意味着大部分的联合查询注入都失效，这个时候可以尝试进行盲注。</p>
+<h2 id="4-3-逗号过滤-拦截"><a href="#4-3-逗号过滤-拦截" class="headerlink" title="4.3 逗号过滤&#x2F;拦截"></a>4.3 逗号过滤&#x2F;拦截</h2><p>拦截逗号后，意味着大部分的联合查询注入都失效，这个时候可以尝试进行盲注。</p>
 <p>substring和if语句都用到了逗号，因此无法使用。</p>
 <p>substring可以用substr()函数来进行代替，if语句可以通过and语句来进行代替。</p>
-<h2 id="4-4-单引号拦截-x2F-过滤-x2F-转义"><a href="#4-4-单引号拦截-x2F-过滤-x2F-转义" class="headerlink" title="4.4 单引号拦截&#x2F;过滤&#x2F;转义"></a>4.4 单引号拦截&#x2F;过滤&#x2F;转义</h2><p>当引号存在过滤和转义的情况下，可以这样处理：</p>
+<h2 id="4-4-单引号拦截-过滤-转义"><a href="#4-4-单引号拦截-过滤-转义" class="headerlink" title="4.4 单引号拦截&#x2F;过滤&#x2F;转义"></a>4.4 单引号拦截&#x2F;过滤&#x2F;转义</h2><p>当引号存在过滤和转义的情况下，可以这样处理：</p>
 <h3 id="4-4-1-利用编码特性绕过。（宽字节注入）"><a href="#4-4-1-利用编码特性绕过。（宽字节注入）" class="headerlink" title="4.4.1 利用编码特性绕过。（宽字节注入）"></a>4.4.1 利用编码特性绕过。（宽字节注入）</h3><p>比较典型的使用编码就是GBK编码：使用前面的字符吃掉后面的字符(斜杆)。</p>
 <p>待补充</p>
 <h3 id="4-4-2-利用反斜杠-绕过"><a href="#4-4-2-利用反斜杠-绕过" class="headerlink" title="4.4.2 利用反斜杠\绕过"></a>4.4.2 利用反斜杠\绕过</h3><p>待补充</p>
 <h3 id="4-4-3-将-utf-8-转换为-utf-16-或-utf-32"><a href="#4-4-3-将-utf-8-转换为-utf-16-或-utf-32" class="headerlink" title="4.4.3 将 utf-8 转换为 utf-16 或 utf-32"></a>4.4.3 将 utf-8 转换为 utf-16 或 utf-32</h3><p>待补充</p>
-<h2 id="4-5-数字被过滤-x2F-拦截绕过"><a href="#4-5-数字被过滤-x2F-拦截绕过" class="headerlink" title="4.5 数字被过滤&#x2F;拦截绕过"></a>4.5 数字被过滤&#x2F;拦截绕过</h2><p>数字被屏蔽时，用响应函数结果来构造。</p>
+<h2 id="4-5-数字被过滤-拦截绕过"><a href="#4-5-数字被过滤-拦截绕过" class="headerlink" title="4.5 数字被过滤&#x2F;拦截绕过"></a>4.5 数字被过滤&#x2F;拦截绕过</h2><p>数字被屏蔽时，用响应函数结果来构造。</p>
 <ul>
 <li>ceil() ：为向上取整函数</li>
 <li>floor()：为向下取整函数</li>
@@ -592,7 +592,7 @@
 </ul>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sql">?id<span class="hljs-operator">=</span><span class="hljs-number">1</span><span class="hljs-string">&#x27; or &#x27;</span><span class="hljs-number">1</span><span class="hljs-string">&#x27; IN (&#x27;</span><span class="hljs-number">1234</span><span class="hljs-string">&#x27;)#</span><br><span class="hljs-string">?id=1&#x27;</span> <span class="hljs-keyword">or</span> <span class="hljs-number">1</span> <span class="hljs-keyword">like</span> <span class="hljs-number">1</span>#<br></code></pre></td></tr></table></figure>
 
-<h2 id="4-7-其他关键字过滤-x2F-拦截绕过"><a href="#4-7-其他关键字过滤-x2F-拦截绕过" class="headerlink" title="4.7 其他关键字过滤&#x2F;拦截绕过"></a>4.7 其他关键字过滤&#x2F;拦截绕过</h2><p>关键字被过滤时，可以通过双写或大小写、其他编码例如十六进制、URL编码来进行绕过：</p>
+<h2 id="4-7-其他关键字过滤-拦截绕过"><a href="#4-7-其他关键字过滤-拦截绕过" class="headerlink" title="4.7 其他关键字过滤&#x2F;拦截绕过"></a>4.7 其他关键字过滤&#x2F;拦截绕过</h2><p>关键字被过滤时，可以通过双写或大小写、其他编码例如十六进制、URL编码来进行绕过：</p>
 <table>
 <thead>
 <tr>
@@ -698,13 +698,13 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>经典漏洞-SQL注入</div>
-      <div>https://imiloo.github.io/2022/08/04/2022-08-04.经典漏洞-SQL注入/</div>
+      <div>https://worisur.github.io/2022/08/04/2022-08-04.经典漏洞-SQL注入/</div>
     </div>
     <div class="license-meta">
       
         <div class="license-meta-item">
           <div>作者</div>
-          <div>miloo</div>
+          <div>worisur</div>
         </div>
       
       
@@ -782,7 +782,7 @@
       window.UtterancesThemeDark = dark;
       var s = document.createElement('script');
       s.setAttribute('src', 'https://utteranc.es/client.js');
-      s.setAttribute('repo', 'imiloo/imiloo.github.io');
+      s.setAttribute('repo', 'worisur/worisur.github.io');
       s.setAttribute('issue-term', 'title');
       
       s.setAttribute('label', 'utterances');

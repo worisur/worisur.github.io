@@ -13,7 +13,7 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="miloo">
+  <meta name="author" content="worisur">
   <meta name="keywords" content="">
   
     <meta name="description" content="gentoo 安装配置记录……">
@@ -22,7 +22,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Gentoo 配置手册 - miloo&#39;s blog</title>
+  <title>Gentoo 配置手册 - worisur&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -60,7 +60,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"imiloo.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"worisur.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -378,9 +378,9 @@
 <li><code>/etc/portage/package.accept_keywords</code> 文件夹中创建文件，添加需要开启 <code>~amd</code>(测试) 属性的包<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">app-office/wps-office ~*<br></code></pre></td></tr></table></figure></li>
 <li><code>/etc/portage/package.use</code> 文件夹中创建文件，添加与 <code>/etc/portage/make.conf</code> 中 <code>USE</code> 相悖或者仅对该包生效的 <code>flag</code><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">app-emulation/qemu spice QEMU_SOFTMMU_TARGETS: x86_64 QEMU_USER_TARGETS: x86_64<br>net-dns/dnsmasq script<br>net-misc/spice-gtk usbredir<br></code></pre></td></tr></table></figure></li>
 </ul>
-<h1 id="4-tools"><a href="#4-tools" class="headerlink" title="4 tools"></a>4 tools</h1><h2 id="4-1-包管理"><a href="#4-1-包管理" class="headerlink" title="4.1 包管理"></a>4.1 包管理</h2><h3 id="4-1-1-app-portage-x2F-eix"><a href="#4-1-1-app-portage-x2F-eix" class="headerlink" title="4.1.1 app-portage&#x2F;eix"></a>4.1.1 app-portage&#x2F;eix</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">app-portage/eix<br>app-portage/gentoolkit<br>app-portage/layman<br></code></pre></td></tr></table></figure>
+<h1 id="4-tools"><a href="#4-tools" class="headerlink" title="4 tools"></a>4 tools</h1><h2 id="4-1-包管理"><a href="#4-1-包管理" class="headerlink" title="4.1 包管理"></a>4.1 包管理</h2><h3 id="4-1-1-app-portage-eix"><a href="#4-1-1-app-portage-eix" class="headerlink" title="4.1.1 app-portage&#x2F;eix"></a>4.1.1 app-portage&#x2F;eix</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">app-portage/eix<br>app-portage/gentoolkit<br>app-portage/layman<br></code></pre></td></tr></table></figure>
 
-<h2 id="4-2-文件系统"><a href="#4-2-文件系统" class="headerlink" title="4.2 文件系统"></a>4.2 文件系统</h2><h3 id="4-2-1-sys-fs-x2F-lvm2"><a href="#4-2-1-sys-fs-x2F-lvm2" class="headerlink" title="4.2.1 sys-fs&#x2F;lvm2"></a>4.2.1 sys-fs&#x2F;lvm2</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sys-fs/lvm2<br></code></pre></td></tr></table></figure>
+<h2 id="4-2-文件系统"><a href="#4-2-文件系统" class="headerlink" title="4.2 文件系统"></a>4.2 文件系统</h2><h3 id="4-2-1-sys-fs-lvm2"><a href="#4-2-1-sys-fs-lvm2" class="headerlink" title="4.2.1 sys-fs&#x2F;lvm2"></a>4.2.1 sys-fs&#x2F;lvm2</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sys-fs/lvm2<br></code></pre></td></tr></table></figure>
 
 <h3 id="4-2-2-ntfs"><a href="#4-2-2-ntfs" class="headerlink" title="4.2.2 ntfs"></a>4.2.2 ntfs</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sys-fs/ntfs3g<br></code></pre></td></tr></table></figure>
 
@@ -454,13 +454,13 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>Gentoo 配置手册</div>
-      <div>https://imiloo.github.io/2022/07/04/2022-07-04.gentoo配置手册/</div>
+      <div>https://worisur.github.io/2022/07/04/2022-07-04.gentoo配置手册/</div>
     </div>
     <div class="license-meta">
       
         <div class="license-meta-item">
           <div>作者</div>
-          <div>miloo</div>
+          <div>worisur</div>
         </div>
       
       
@@ -538,7 +538,7 @@
       window.UtterancesThemeDark = dark;
       var s = document.createElement('script');
       s.setAttribute('src', 'https://utteranc.es/client.js');
-      s.setAttribute('repo', 'imiloo/imiloo.github.io');
+      s.setAttribute('repo', 'worisur/worisur.github.io');
       s.setAttribute('issue-term', 'title');
       
       s.setAttribute('label', 'utterances');

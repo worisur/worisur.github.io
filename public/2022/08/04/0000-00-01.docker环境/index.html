@@ -13,7 +13,7 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="miloo">
+  <meta name="author" content="worisur">
   <meta name="keywords" content="">
   
     <meta name="description" content="dvwa sqli-labs……">
@@ -22,7 +22,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>docker 环境 - miloo&#39;s blog</title>
+  <title>docker 环境 - worisur&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -60,7 +60,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"imiloo.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"worisur.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -291,7 +291,7 @@
             
               <div class="markdown-body">
                 
-                <h1 id="portainer-ce"><a href="#portainer-ce" class="headerlink" title="portainer-ce"></a>portainer-ce</h1><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs awk">docker pull portainer/portainer-ce<br>docker volume create portainer-data<br>docker run -d -p <span class="hljs-number">8000</span>:<span class="hljs-number">8000</span> -p <span class="hljs-number">9000</span>:<span class="hljs-number">9000</span> --name=portainer --restart=always -v <span class="hljs-regexp">/var/</span>run<span class="hljs-regexp">/docker.sock:/</span>var<span class="hljs-regexp">/run/</span>docker.sock -v portainer-data:<span class="hljs-regexp">/data portainer/</span>portainer-ce<br></code></pre></td></tr></table></figure>
+                <h1 id="portainer-ce"><a href="#portainer-ce" class="headerlink" title="portainer-ce"></a>portainer-ce</h1><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile">docker pull portainer/portainer-ce<br>docker <span class="hljs-keyword">volume</span><span class="language-bash"> create portainer-data</span><br>docker <span class="hljs-keyword">run</span><span class="language-bash"> -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer-data:/data portainer/portainer-ce</span><br></code></pre></td></tr></table></figure>
 
 <h1 id="dvwa"><a href="#dvwa" class="headerlink" title="dvwa"></a>dvwa</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker pull citizenstig/dvwa<br>docker run -d -p 宿主机端口:容器端口 citizenstig/dvwa<br>docker run -d -p 30001:80 citizenstig/dvwa<br>http://192.168.110.12:30001/login.php<br></code></pre></td></tr></table></figure>
 
@@ -333,13 +333,13 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>docker 环境</div>
-      <div>https://imiloo.github.io/2022/08/04/0000-00-01.docker环境/</div>
+      <div>https://worisur.github.io/2022/08/04/0000-00-01.docker环境/</div>
     </div>
     <div class="license-meta">
       
         <div class="license-meta-item">
           <div>作者</div>
-          <div>miloo</div>
+          <div>worisur</div>
         </div>
       
       
@@ -394,7 +394,7 @@
       window.UtterancesThemeDark = dark;
       var s = document.createElement('script');
       s.setAttribute('src', 'https://utteranc.es/client.js');
-      s.setAttribute('repo', 'imiloo/imiloo.github.io');
+      s.setAttribute('repo', 'worisur/worisur.github.io');
       s.setAttribute('issue-term', 'title');
       
       s.setAttribute('label', 'utterances');
