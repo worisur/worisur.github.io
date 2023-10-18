@@ -16,13 +16,13 @@
   <meta name="author" content="worisur">
   <meta name="keywords" content="">
   
-    <meta name="description" content="git push">
+    <meta name="description" content="codecombat、docker">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Git global setup - worisur&#39;s blog</title>
+  <title>Docker 搭建 codecombat 本地服务 - worisur&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -203,7 +203,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Git global setup"></span>
+            <span id="subtitle" data-typed-text="Docker 搭建 codecombat 本地服务"></span>
           
         </div>
 
@@ -214,8 +214,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-05-23 20:46" pubdate>
-          2022年5月23日 晚上
+        <time datetime="2023-03-20 08:30" pubdate>
+          2023年3月20日 早上
         </time>
       </span>
     
@@ -227,7 +227,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          1.5k 字
+          1.1k 字
         
       </span>
     
@@ -239,7 +239,7 @@
         
         
           <!-- compatible with older versions-->
-          13 分钟
+          9 分钟
         
       </span>
     
@@ -277,40 +277,28 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Git global setup</h1>
-            
-              <p class="note note-info">
-                
-                  
-                    <!-- compatible with older versions-->
-                    本文最后更新于：2022年6月7日 上午
-                  
-                
-              </p>
+            <h1 style="display: none">Docker 搭建 codecombat 本地服务</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="Git-global-setup"><a href="#Git-global-setup" class="headerlink" title="Git global setup"></a>Git global setup</h1><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs stylus">git config <span class="hljs-attr">--global</span> user<span class="hljs-selector-class">.name</span> <span class="hljs-string">&quot;miloo&quot;</span><br>git config <span class="hljs-attr">--global</span> user<span class="hljs-selector-class">.email</span> <span class="hljs-string">&quot;miloo@worisur&quot;</span><br></code></pre></td></tr></table></figure>
+                <h1 id="1-创建容器"><a href="#1-创建容器" class="headerlink" title="1 创建容器"></a>1 创建容器</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 拉取codecombat镜像</span><br>docker pull operepo/ope-codecombat<br><br><span class="hljs-comment"># 创建 container</span><br>docker run -itd --name mycoco -p 0.0.0.0:3020:3000 operepo/ope-codecombat /bin/bash<br><br></code></pre></td></tr></table></figure>
 
-<h1 id="Create-a-new-repository"><a href="#Create-a-new-repository" class="headerlink" title="Create a new repository"></a>Create a new repository</h1><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs stylus">git clone git@gitlab<span class="hljs-selector-class">.com</span>:imiloo/imiloo<span class="hljs-selector-class">.gitlab</span><span class="hljs-selector-class">.io</span><span class="hljs-selector-class">.git</span><br>cd imiloo<span class="hljs-selector-class">.gitlab</span><span class="hljs-selector-class">.io</span><br>git switch -c <span class="hljs-selector-tag">main</span><br>touch README<span class="hljs-selector-class">.md</span><br>git add README<span class="hljs-selector-class">.md</span><br>git commit -m <span class="hljs-string">&quot;add README&quot;</span><br>git push -u origin main<br></code></pre></td></tr></table></figure>
+<p>下载数据包：<a target="_blank" rel="noopener" href="https://github.com/mingyue0094/the_the_tes/releases/download/v1.1/dump.tar.gz">dump.tar.gz</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 把数据包dump.tar.gz复制到容器内</span><br>docker <span class="hljs-built_in">cp</span> dump.tar.gz mycoco:/home/coco/codecombat/data/<br><br><span class="hljs-comment"># 进入容器</span><br>docker <span class="hljs-built_in">exec</span> -it mycoco /bin/bash<br><br><span class="hljs-comment"># 进入放数据的data目录</span><br><span class="hljs-built_in">cd</span> /home/coco/codecombat/data/<br><br><span class="hljs-comment"># 解压</span><br>tar -zxvf dump.tar.gz<br></code></pre></td></tr></table></figure>
 
-<h1 id="Push-an-existing-folder"><a href="#Push-an-existing-folder" class="headerlink" title="Push an existing folder"></a>Push an existing folder</h1><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs routeros">cd existing_folder<br>git init <span class="hljs-attribute">--initial-branch</span>=main<br>git remote <span class="hljs-built_in">add</span> origin git@gitlab.com:imiloo/imiloo.gitlab.io.git<br>git <span class="hljs-built_in">add</span> .<br>git commit -m <span class="hljs-string">&quot;Initial commit&quot;</span><br>git push -u origin main<br></code></pre></td></tr></table></figure>
+<h1 id="2-配置-container-启动服务"><a href="#2-配置-container-启动服务" class="headerlink" title="2 配置 container 启动服务"></a>2 配置 container 启动服务</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 进入容器</span><br>docker <span class="hljs-built_in">exec</span> -it mycoco /bin/bash<br><br><span class="hljs-comment"># 服务自启动，将以下下内容加入 /root/.bashrc 文件末尾</span><br><br><span class="hljs-keyword">if</span> [ -f /root/.bashrc ]; <span class="hljs-keyword">then</span><br>    <span class="hljs-built_in">cd</span> /home/coco/codecombat/ &amp;&amp; <span class="hljs-built_in">nohup</span> ./bin/coco-mongodb &gt; mycoco-mongodb.log 2&gt;&amp;1 &amp;<br>    <span class="hljs-built_in">cd</span> /home/coco &amp;&amp; <span class="hljs-built_in">nohup</span> sh start.sh &gt; mystart.log 2&gt;&amp;1 &amp;<br><span class="hljs-keyword">fi</span><br><br></code></pre></td></tr></table></figure>
 
-<h1 id="Push-an-existing-Git-repository"><a href="#Push-an-existing-Git-repository" class="headerlink" title="Push an existing Git repository"></a>Push an existing Git repository</h1><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs stylus">cd existing_repo<br>git switch -c <span class="hljs-selector-tag">main</span><br>git remote rename origin old-origin<br>git remote add origin git@gitlab<span class="hljs-selector-class">.com</span>:imiloo/imiloo<span class="hljs-selector-class">.gitlab</span><span class="hljs-selector-class">.io</span><span class="hljs-selector-class">.git</span><br>git commit -m <span class="hljs-string">&quot;update blog&quot;</span><br>git push -u origin <span class="hljs-attr">--all</span><br>git push -u origin <span class="hljs-attr">--tags</span><br></code></pre></td></tr></table></figure>
+<h1 id="3-超级管理员模式"><a href="#3-超级管理员模式" class="headerlink" title="3 超级管理员模式"></a>3 超级管理员模式</h1><p>打开 <a target="_blank" rel="noopener" href="http://127.0.0.1:3020/">http://127.0.0.1:3020</a> 或自己电脑的 http:&#x2F;&#x2F;[ip]:3020 ，点击【注册】，要选择【独立账号】。</p>
+<p>用个自己的邮箱和账号（英文就行），比如我的账号名为：mm</p>
+<blockquote>
+<p>Tips：出生日期往前面选一点，选择1990年之前，否则判定不是家长，就无法注册。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 进入容器</span><br>docker <span class="hljs-built_in">exec</span> -it mycoco /bin/bash<br><span class="hljs-comment"># 打开数据库</span><br>mongo<br><span class="hljs-comment"># 使用cocoo数据库</span><br>use coco<br><span class="hljs-comment"># 将 mm 账号升级为“超级管理员模式”，这里 mm 为你自己注册时候用的名字</span><br>db.users.update(&#123;<span class="hljs-string">&#x27;name&#x27;</span>:<span class="hljs-string">&#x27;mm&#x27;</span>&#125;,&#123;<span class="hljs-variable">$set</span>:&#123;<span class="hljs-string">&#x27;earned.gems&#x27;</span>:9999999,permissions:[<span class="hljs-string">&quot;godmode&quot;</span>,<span class="hljs-string">&quot;admin&quot;</span>]&#125;&#125;,<span class="hljs-literal">true</span>,<span class="hljs-literal">false</span>);<br><br></code></pre></td></tr></table></figure>
 
-<h1 id="日常使用"><a href="#日常使用" class="headerlink" title="日常使用"></a>日常使用</h1><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sql">git <span class="hljs-keyword">add</span> .<br>git switch <span class="hljs-operator">-</span>c main<br>git remote rename origin <span class="hljs-keyword">old</span><span class="hljs-operator">-</span>origin<br>git remote <span class="hljs-keyword">add</span> origin git<span class="hljs-variable">@github</span>.com:imiloo<span class="hljs-operator">/</span>imiloo.github.io.git<br>git <span class="hljs-keyword">commit</span> <span class="hljs-operator">-</span>m &quot;update blog&quot;<br>git push <span class="hljs-operator">-</span>u origin <span class="hljs-comment">--all</span><br>git push <span class="hljs-operator">-</span>u origin <span class="hljs-comment">--tags</span><br></code></pre></td></tr></table></figure>
-
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sql">git <span class="hljs-keyword">add</span> .<br>git switch <span class="hljs-operator">-</span>c main<br>git remote rename origin <span class="hljs-keyword">old</span><span class="hljs-operator">-</span>origin<br>git remote <span class="hljs-keyword">add</span> origin git<span class="hljs-variable">@gitlab</span>.com:imiloo<span class="hljs-operator">/</span>imiloo.gitlab.io.git<br>git <span class="hljs-keyword">commit</span> <span class="hljs-operator">-</span>m &quot;update blog&quot;<br>git push <span class="hljs-operator">-</span>u origin <span class="hljs-comment">--all</span><br>git push <span class="hljs-operator">-</span>u origin <span class="hljs-comment">--tags</span><br></code></pre></td></tr></table></figure>
-
-<h1 id="删除文件"><a href="#删除文件" class="headerlink" title="删除文件"></a>删除文件</h1><ol>
-<li>克隆远程仓库到本地库,例如使用ssh方法：<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">git <span class="hljs-keyword">clone</span> <span class="hljs-title">git</span>@github.com:xxx/xxx.git<br></code></pre></td></tr></table></figure></li>
-<li>对需要删除的文件、文件夹进行如下操作:<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs stata">git <span class="hljs-keyword">rm</span> <span class="hljs-keyword">test</span>.txt (删除文件)<br>git <span class="hljs-keyword">rm</span> -r <span class="hljs-keyword">test</span> (删除文件夹)<br></code></pre></td></tr></table></figure></li>
-<li>提交修改<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs n1ql">git commit -m &quot;<span class="hljs-keyword">Delete</span> <span class="hljs-keyword">some</span> files.<span class="hljs-string">&quot;</span><br></code></pre></td></tr></table></figure></li>
-<li>将修改提交到远程仓库的xxx分支:<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs maxima">git <span class="hljs-built_in">push</span> <span class="hljs-built_in">origin</span> xxx<br></code></pre></td></tr></table></figure></li>
-</ol>
-<h1 id="删除远程仓库-但不删本地资源"><a href="#删除远程仓库-但不删本地资源" class="headerlink" title="删除远程仓库 但不删本地资源"></a>删除远程仓库 但不删本地资源</h1><p>把xxx.iml加到<code>.gitignore</code>里面忽略掉，然后提交使.gitignore生效，既:</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs stylus">git rm -r <span class="hljs-attr">--cached</span> xxx<span class="hljs-selector-class">.iml</span>　　<span class="hljs-comment">//-r 是递归的意思   当最后面是文件夹的时候有用</span><br>git add xxx<span class="hljs-selector-class">.iml</span>　　　　　 <span class="hljs-comment">//若.gitignore文件中已经忽略了xxx.iml则可以不用执行此句</span><br>git commit -m <span class="hljs-string">&quot;ignore xxx.xml&quot;</span><br>git push<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>Tip:刷新页面。</p>
+</blockquote>
 
                 
               </div>
@@ -326,6 +314,23 @@
 <span class="category-chains">
   
   
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Coding/" class="category-chain-item">Coding</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Coding/game/" class="category-chain-item">game</a>
+  
+  
+
+  
+
+      </span>
+    
+  
 </span>
 
     </div>
@@ -334,7 +339,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/git/">#git</a>
+        <a href="/tags/Coding/">#Coding</a>
+      
+        <a href="/tags/game/">#game</a>
       
     </div>
   
@@ -346,8 +353,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Git global setup</div>
-      <div>https://worisur.github.io/2022/05/23/0000-00-00.示例git/</div>
+      <div>Docker 搭建 codecombat 本地服务</div>
+      <div>https://worisur.github.io/2023/03/20/2023-10-18.Hexo博客搭建与迁移/</div>
     </div>
     <div class="license-meta">
       
@@ -359,7 +366,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年5月23日</div>
+          <div>2023年3月20日</div>
         </div>
       
       
@@ -386,6 +393,29 @@
 
 
 
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/20/2023-03-20.codecombat%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/" title="Docker 搭建 codecombat 本地服务">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Docker 搭建 codecombat 本地服务</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/08/24/2022-08-24.%E8%B6%8A%E6%9D%83_cookie_session/" title="越权、cookie和session">
+                        <span class="hidden-mobile">越权、cookie和session</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
               
             </div>
 
