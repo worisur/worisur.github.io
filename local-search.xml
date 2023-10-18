@@ -62,35 +62,6 @@
   
   
   <entry>
-    <title>Docker 搭建 codecombat 本地服务</title>
-    <link href="/2023/03/20/2023-10-18.Hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E8%BF%81%E7%A7%BB/"/>
-    <url>/2023/03/20/2023-10-18.Hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E4%B8%8E%E8%BF%81%E7%A7%BB/</url>
-    
-    <content type="html"><![CDATA[<h1 id="1-创建容器"><a href="#1-创建容器" class="headerlink" title="1 创建容器"></a>1 创建容器</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 拉取codecombat镜像</span><br>docker pull operepo/ope-codecombat<br><br><span class="hljs-comment"># 创建 container</span><br>docker run -itd --name mycoco -p 0.0.0.0:3020:3000 operepo/ope-codecombat /bin/bash<br><br></code></pre></td></tr></table></figure><p>下载数据包：<a href="https://github.com/mingyue0094/the_the_tes/releases/download/v1.1/dump.tar.gz">dump.tar.gz</a></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 把数据包dump.tar.gz复制到容器内</span><br>docker <span class="hljs-built_in">cp</span> dump.tar.gz mycoco:/home/coco/codecombat/data/<br><br><span class="hljs-comment"># 进入容器</span><br>docker <span class="hljs-built_in">exec</span> -it mycoco /bin/bash<br><br><span class="hljs-comment"># 进入放数据的data目录</span><br><span class="hljs-built_in">cd</span> /home/coco/codecombat/data/<br><br><span class="hljs-comment"># 解压</span><br>tar -zxvf dump.tar.gz<br></code></pre></td></tr></table></figure><h1 id="2-配置-container-启动服务"><a href="#2-配置-container-启动服务" class="headerlink" title="2 配置 container 启动服务"></a>2 配置 container 启动服务</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 进入容器</span><br>docker <span class="hljs-built_in">exec</span> -it mycoco /bin/bash<br><br><span class="hljs-comment"># 服务自启动，将以下下内容加入 /root/.bashrc 文件末尾</span><br><br><span class="hljs-keyword">if</span> [ -f /root/.bashrc ]; <span class="hljs-keyword">then</span><br>    <span class="hljs-built_in">cd</span> /home/coco/codecombat/ &amp;&amp; <span class="hljs-built_in">nohup</span> ./bin/coco-mongodb &gt; mycoco-mongodb.log 2&gt;&amp;1 &amp;<br>    <span class="hljs-built_in">cd</span> /home/coco &amp;&amp; <span class="hljs-built_in">nohup</span> sh start.sh &gt; mystart.log 2&gt;&amp;1 &amp;<br><span class="hljs-keyword">fi</span><br><br></code></pre></td></tr></table></figure><h1 id="3-超级管理员模式"><a href="#3-超级管理员模式" class="headerlink" title="3 超级管理员模式"></a>3 超级管理员模式</h1><p>打开 <a href="http://127.0.0.1:3020/">http://127.0.0.1:3020</a> 或自己电脑的 http:&#x2F;&#x2F;[ip]:3020 ，点击【注册】，要选择【独立账号】。</p><p>用个自己的邮箱和账号（英文就行），比如我的账号名为：mm</p><blockquote><p>Tips：出生日期往前面选一点，选择1990年之前，否则判定不是家长，就无法注册。</p></blockquote><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 进入容器</span><br>docker <span class="hljs-built_in">exec</span> -it mycoco /bin/bash<br><span class="hljs-comment"># 打开数据库</span><br>mongo<br><span class="hljs-comment"># 使用cocoo数据库</span><br>use coco<br><span class="hljs-comment"># 将 mm 账号升级为“超级管理员模式”，这里 mm 为你自己注册时候用的名字</span><br>db.users.update(&#123;<span class="hljs-string">&#x27;name&#x27;</span>:<span class="hljs-string">&#x27;mm&#x27;</span>&#125;,&#123;<span class="hljs-variable">$set</span>:&#123;<span class="hljs-string">&#x27;earned.gems&#x27;</span>:9999999,permissions:[<span class="hljs-string">&quot;godmode&quot;</span>,<span class="hljs-string">&quot;admin&quot;</span>]&#125;&#125;,<span class="hljs-literal">true</span>,<span class="hljs-literal">false</span>);<br><br></code></pre></td></tr></table></figure><blockquote><p>Tip:刷新页面。</p></blockquote>]]></content>
-    
-    
-    <categories>
-      
-      <category>Coding</category>
-      
-      <category>game</category>
-      
-    </categories>
-    
-    
-    <tags>
-      
-      <tag>Coding</tag>
-      
-      <tag>game</tag>
-      
-    </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>越权、cookie和session</title>
     <link href="/2022/08/24/2022-08-24.%E8%B6%8A%E6%9D%83_cookie_session/"/>
     <url>/2022/08/24/2022-08-24.%E8%B6%8A%E6%9D%83_cookie_session/</url>
