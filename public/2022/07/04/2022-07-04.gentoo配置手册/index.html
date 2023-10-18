@@ -1,0 +1,841 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/webicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="miloo">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="gentoo 安装配置记录……">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Gentoo 配置手册 - miloo&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"imiloo.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Miloo&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/bg.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Gentoo 配置手册"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-07-04 10:46" pubdate>
+          2022年7月4日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          67 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Gentoo 配置手册</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2023年3月18日 上午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <ul>
+<li><a href="#1-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C">1 准备工作</a><ul>
+<li><a href="#11-%E4%B8%8B%E8%BD%BD">1.1 下载</a></li>
+<li><a href="#12-%E7%BD%91%E7%BB%9C">1.2 网络</a></li>
+<li><a href="#13-%E5%88%86%E5%8C%BA%E6%8C%82%E8%BD%BD">1.3 分区挂载</a></li>
+<li><a href="#14-ssh%E8%BF%9E%E6%8E%A5%E6%9C%80%E5%B0%8F%E5%8C%96%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F">1.4 ssh连接最小化安装系统</a></li>
+</ul>
+</li>
+<li><a href="#2-%E5%AE%89%E8%A3%85">2 安装</a><ul>
+<li><a href="#21-%E8%A7%A3%E5%8E%8B%E5%9F%BA%E6%9C%AC%E7%B3%BB%E7%BB%9F">2.1 解压基本系统</a></li>
+<li><a href="#22-%E9%95%9C%E5%83%8F%E6%BA%90%E4%B8%8Echroot">2.2 镜像源与chroot</a></li>
+<li><a href="#23-portage%E4%BB%93%E5%BA%93">2.3 portage仓库</a></li>
+<li><a href="#24-profile%E9%80%89%E6%8B%A9">2.4 profile选择</a></li>
+<li><a href="#25-%E5%AE%89%E8%A3%85%E5%86%85%E6%A0%B8%E5%9B%BA%E4%BB%B6">2.5 安装内核、固件</a></li>
+<li><a href="#26-%E9%85%8D%E7%BD%AE%E5%BC%95%E5%AF%BC">2.6 配置引导</a></li>
+<li><a href="#27-%E6%97%B6%E5%8C%BA%E5%AD%97%E7%AC%A6%E9%9B%86%E9%85%8D%E7%BD%AE">2.7 时区、字符集配置</a></li>
+<li><a href="#28-virtualbox-%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%85%8D%E7%BD%AE">2.8 virtualbox 虚拟机配置</a></li>
+</ul>
+</li>
+<li><a href="#3-use">3 USE</a><ul>
+<li><a href="#31-makeconf">3.1 make.conf</a></li>
+<li><a href="#32-use">3.2 USE</a></li>
+</ul>
+</li>
+<li><a href="#4-tools">4 tools</a><ul>
+<li><a href="#41-%E5%8C%85%E7%AE%A1%E7%90%86">4.1 包管理</a><ul>
+<li><a href="#411-app-portageeix">4.1.1 app-portage&#x2F;eix</a></li>
+</ul>
+</li>
+<li><a href="#42-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F">4.2 文件系统</a><ul>
+<li><a href="#421-sys-fslvm2">4.2.1 sys-fs&#x2F;lvm2</a></li>
+<li><a href="#422-ntfs">4.2.2 ntfs</a></li>
+</ul>
+</li>
+<li><a href="#43-de">4.3 DE</a><ul>
+<li><a href="#431-gnome">4.3.1 gnome</a></li>
+</ul>
+</li>
+<li><a href="#44-vitual">4.4 vitual</a><ul>
+<li><a href="#441-virtualbox">4.4.1 virtualbox</a></li>
+<li><a href="#442-kvm">4.4.2 kvm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#5-%E7%B3%BB%E7%BB%9F%E8%BF%81%E7%A7%BB">5 系统迁移</a><ul>
+<li><a href="#51-%E6%9D%83%E9%99%90%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D">5.1 权限备份与恢复</a></li>
+<li><a href="#52-%E7%94%A8%E6%88%B7%E7%BB%84">5.2 用户组</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1 准备工作"></a>1 准备工作</h1><h2 id="1-1-下载"><a href="#1-1-下载" class="headerlink" title="1.1 下载"></a>1.1 下载</h2><ul>
+<li><p>下载<a target="_blank" rel="noopener" href="https://mirrors.bfsu.edu.cn/gentoo/releases/amd64/autobuilds/current-install-amd64-minimal/">最小化安装镜像</a>, 名称为: <code>install-amd64-minimal-&#123;日期&#125;.iso</code>  </p>
+</li>
+<li><p>下载<a target="_blank" rel="noopener" href="https://mirrors.bfsu.edu.cn/gentoo/releases/amd64/autobuilds/">合适的stage3</a>,以日期为路径: <code>20220703T170542Z/stage3-amd64-desktop-systemd-20220703T170542Z.tar.xz</code></p>
+</li>
+</ul>
+<h2 id="1-2-网络"><a href="#1-2-网络" class="headerlink" title="1.2 网络"></a>1.2 网络</h2><p>基操忽略</p>
+<h2 id="1-3-分区挂载"><a href="#1-3-分区挂载" class="headerlink" title="1.3 分区挂载"></a>1.3 分区挂载</h2><p>基操忽略</p>
+<h2 id="1-4-ssh连接最小化安装系统"><a href="#1-4-ssh连接最小化安装系统" class="headerlink" title="1.4 ssh连接最小化安装系统"></a>1.4 ssh连接最小化安装系统</h2><p>编辑 <code>sshd</code> 服务配置文件 <code>/etc/ssh/sshd_config</code>, 重启服务 <code>rc-server sshd restart</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">PermitRootLogin <span class="hljs-built_in">yes</span><br>PasswordAuthentication <span class="hljs-built_in">yes</span><br></code></pre></td></tr></table></figure>
+<h1 id="2-安装"><a href="#2-安装" class="headerlink" title="2 安装"></a>2 安装</h1><h2 id="2-1-解压基本系统"><a href="#2-1-解压基本系统" class="headerlink" title="2.1 解压基本系统"></a>2.1 解压基本系统</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs bash">livecd ~ <span class="hljs-comment"># blkid</span><br>/dev/sdb: UUID=<span class="hljs-string">&quot;e09609d8-0b90-4f34-aad1-8e5b37495f52&quot;</span> BLOCK_SIZE=<span class="hljs-string">&quot;4096&quot;</span> TYPE=<span class="hljs-string">&quot;ext4&quot;</span><br>/dev/sr0: BLOCK_SIZE=<span class="hljs-string">&quot;2048&quot;</span> UUID=<span class="hljs-string">&quot;2022-07-03-19-01-40-00&quot;</span> LABEL=<span class="hljs-string">&quot;Gentoo amd64 20220703T170542Z&quot;</span> TYPE=<span class="hljs-string">&quot;iso9660&quot;</span> PTUUID=<span class="hljs-string">&quot;5e426e6b&quot;</span> PTTYPE=<span class="hljs-string">&quot;dos&quot;</span><br>loop0: TYPE=<span class="hljs-string">&quot;squashfs&quot;</span><br>/dev/sda2: UUID=<span class="hljs-string">&quot;14077ead-3683-4354-95eb-a106c52350e9&quot;</span> BLOCK_SIZE=<span class="hljs-string">&quot;4096&quot;</span> TYPE=<span class="hljs-string">&quot;ext4&quot;</span> PARTUUID=<span class="hljs-string">&quot;4af31142-0ead-0644-b34c-c01b7c0944e1&quot;</span><br>/dev/sda1: UUID=<span class="hljs-string">&quot;831A-6EDD&quot;</span> BLOCK_SIZE=<span class="hljs-string">&quot;512&quot;</span> TYPE=<span class="hljs-string">&quot;vfat&quot;</span> PARTUUID=<span class="hljs-string">&quot;733a54ad-b3d7-3842-8cc8-21b15d29e82d&quot;</span><br>livecd ~ <span class="hljs-comment"># mount /dev/sda2 /mnt/gentoo/</span><br>livecd ~ <span class="hljs-comment"># mkdir /mnt/gentoo/boot</span><br>livecd ~ <span class="hljs-comment"># mount /dev/sda1 /mnt/gentoo/boot</span><br>livecd ~ <span class="hljs-comment"># cd /mnt/gentoo/</span><br>livecd /mnt/gentoo <span class="hljs-comment"># ls</span><br>boot  lost+found<br>livecd /mnt/gentoo <span class="hljs-comment"># wget https://mirrors.bfsu.edu.cn/gentoo/releases/amd64/autobuilds/20220703T170542Z/stage3-amd64-desktop-systemd-20220703T170542Z.tar.xz</span><br>--2022-07-05 08:09:54--  https://mirrors.bfsu.edu.cn/gentoo/releases/amd64/autobuilds/20220703T170542Z/stage3-amd64-desktop-systemd-20220703T170542Z.tar.xz  <br>Resolving mirrors.bfsu.edu.cn... 39.155.141.16, 2001:da8:20f:1003::fe55:2840<br>Connecting to mirrors.bfsu.edu.cn|39.155.141.16|:443... connected.<br>HTTP request sent, awaiting response... 200 OK<br>Length: 516402028 (492M) [application/octet-stream]<br>Saving to: ‘stage3-amd64-desktop-systemd-20220703T170542Z.tar.xz’<br>stage3-amd64-desktop-systemd- 100%[=================================================&gt;] 492.48M  11.3MB/s    <span class="hljs-keyword">in</span> 46s<br>2022-07-05 08:10:40 (10.6 MB/s) - ‘stage3-amd64-desktop-systemd-20220703T170542Z.tar.xz’ saved [516402028/516402028]<br>livecd /mnt/gentoo <span class="hljs-comment"># tar xpvf stage3-amd64-desktop-systemd-20220703T170542Z.tar.xz --xattrs-include=&#x27;*.*&#x27; --numeric-owner</span><br>……<br></code></pre></td></tr></table></figure>
+<h2 id="2-2-镜像源与chroot"><a href="#2-2-镜像源与chroot" class="headerlink" title="2.2 镜像源与chroot"></a>2.2 镜像源与chroot</h2><p>配置一个速度较快的镜像源服务器地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs bash">mirrorselect -i -o &gt;&gt;/mnt/gentoo/etc/portage/make.conf  <span class="hljs-comment"># 选择163和清华大学源</span><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;GENTOO_MIRRORS=&quot;https://mirrors.tuna.tsinghua.edu.cn/gentoo&quot;&#x27;</span> &gt;&gt;/mnt/gentoo/etc/portage/make.conf<br><span class="hljs-comment"># chroot 到目标系统</span><br><span class="hljs-comment"># 复制 DNS 配置到目标系统环境</span><br><span class="hljs-built_in">cp</span> -L /etc/resolv.conf /mnt/gentoo/etc/<br><span class="hljs-comment"># 挂载必要的文件系统</span><br>mount --types proc /proc /mnt/gentoo/proc<br>mount --rbind /sys /mnt/gentoo/sys<br>mount --rbind /dev /mnt/gentoo/dev<br><span class="hljs-comment"># systemd stage3 额外执行</span><br>mount --make-rslave /mnt/gentoo/sys<br>mount --make-rslave /mnt/gentoo/dev<br><span class="hljs-comment"># chroot 到目标系统环境</span><br><span class="hljs-built_in">chroot</span> /mnt/gentoo<br><span class="hljs-comment"># 导入环境信息</span><br>. /etc/profile<br><span class="hljs-comment"># 修改提示符以便于区分</span><br>PS1=(<span class="hljs-built_in">chroot</span>)<span class="hljs-variable">$PS1</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="2-3-portage仓库"><a href="#2-3-portage仓库" class="headerlink" title="2.3 portage仓库"></a>2.3 portage仓库</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 仓库信息打包下载到本地</span><br>emerge-webrsync<br><span class="hljs-comment"># 安装 vim</span><br>emerge --ask app-editors/vim<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-4-profile选择"><a href="#2-4-profile选择" class="headerlink" title="2.4 profile选择"></a>2.4 profile选择</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">(<span class="hljs-built_in">chroot</span>)livecd / <span class="hljs-comment"># eselect profile list</span><br>(<span class="hljs-built_in">chroot</span>)livecd / <span class="hljs-comment"># eselect profile set 7</span><br>(<span class="hljs-built_in">chroot</span>)livecd / <span class="hljs-comment"># emerge --ask --verbose --update --deep --newuse @world</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="2-5-安装内核、固件"><a href="#2-5-安装内核、固件" class="headerlink" title="2.5 安装内核、固件"></a>2.5 安装内核、固件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">(<span class="hljs-built_in">chroot</span>)livecd / <span class="hljs-comment"># emerge --ask gentoo-kernel  </span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">(<span class="hljs-built_in">chroot</span>)livecd / <span class="hljs-comment"># emerge --ask linux-firmware</span><br><br></code></pre></td></tr></table></figure>
+
+<h2 id="2-6-配置引导"><a href="#2-6-配置引导" class="headerlink" title="2.6 配置引导"></a>2.6 配置引导</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs bash">(<span class="hljs-built_in">chroot</span>)livecd / <span class="hljs-comment"># emerge --ask grub</span><br>(<span class="hljs-built_in">chroot</span>)livecd / <span class="hljs-comment"># grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Gentoo</span><br>Installing <span class="hljs-keyword">for</span> x86_64-efi platform.<br>Installation finished. No error reported.<br>(<span class="hljs-built_in">chroot</span>)livecd / <span class="hljs-comment"># grub-install --target=x86_64-efi --efi-directory=/boot --removable</span><br>Installing <span class="hljs-keyword">for</span> x86_64-efi platform.<br>Installation finished. No error reported.  <br>(<span class="hljs-built_in">chroot</span>)livecd / <span class="hljs-comment"># grub-mkconfig -o /boot/grub/grub.cfg</span><br>Generating grub configuration file ...<br>Found linux image: /boot/vmlinuz-5.15.48-gentoo-dist<br>Found initrd image: /boot/initramfs-5.15.48-gentoo-dist.img<br>Warning: os-prober will not be executed to detect other bootable partitions.<br>Systems on them will not be added to the GRUB boot configuration.<br>Check GRUB_DISABLE_OS_PROBER documentation entry.<br>Adding boot menu entry <span class="hljs-keyword">for</span> UEFI Firmware Settings ...<br><span class="hljs-keyword">done</span>        <br></code></pre></td></tr></table></figure>
+
+<h2 id="2-7-时区、字符集配置"><a href="#2-7-时区、字符集配置" class="headerlink" title="2.7 时区、字符集配置"></a>2.7 时区、字符集配置</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;Asia/Shanghai&#x27;</span> &gt; /etc/timezone<br><span class="hljs-built_in">rm</span> /etc/localtime<br>emerge --config sys-libs/timezone-data<br>vim /etc/locale.gen<br>locale-gen<br><br><span class="hljs-built_in">dd</span> <span class="hljs-keyword">if</span>=/dev/zero of=/swapfile bs=1M count=8192 status=progress<br><span class="hljs-built_in">chmod</span> 600 /swapfile<br>mkswap /swapfile<br>swapon /swapfile<br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;/swapfile               none    swap    defaults        0 0&quot;</span> &gt;&gt; /etc/fstab<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-8-virtualbox-虚拟机配置"><a href="#2-8-virtualbox-虚拟机配置" class="headerlink" title="2.8 virtualbox 虚拟机配置"></a>2.8 virtualbox 虚拟机配置</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 新建用户</span><br>useradd -m -g wheel -G usb,<span class="hljs-built_in">users</span>,audio -s /bin/bash -N miloo<br><br><span class="hljs-comment"># 如果是虚拟机需要添加到以下两个组</span><br>gpasswd -a miloo vboxguest<br>gpasswd -a miloo vboxsf<br><br><span class="hljs-comment"># virtualbox 虚拟机安装后操作</span><br>emerge --ask app-emulation/virtualbox-guest-additions<br>systemctl <span class="hljs-built_in">enable</span> --now virtualbox-guest-additions<br></code></pre></td></tr></table></figure>
+
+<h1 id="3-USE"><a href="#3-USE" class="headerlink" title="3 USE"></a>3 USE</h1><h2 id="3-1-make-conf"><a href="#3-1-make-conf" class="headerlink" title="3.1 make.conf"></a>3.1 make.conf</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># These settings were set by the catalyst build script that automatically</span><br><span class="hljs-comment"># built this stage.</span><br><span class="hljs-comment"># Please consult /usr/share/portage/config/make.conf.example for a more</span><br><span class="hljs-comment"># detailed example.</span><br>COMMON_FLAGS=<span class="hljs-string">&quot;-march=native -O2 -pipe&quot;</span><br>CFLAGS=<span class="hljs-string">&quot;<span class="hljs-variable">$&#123;COMMON_FLAGS&#125;</span>&quot;</span><br>CXXFLAGS=<span class="hljs-string">&quot;<span class="hljs-variable">$&#123;COMMON_FLAGS&#125;</span>&quot;</span><br>FCFLAGS=<span class="hljs-string">&quot;<span class="hljs-variable">$&#123;COMMON_FLAGS&#125;</span>&quot;</span><br>FFLAGS=<span class="hljs-string">&quot;<span class="hljs-variable">$&#123;COMMON_FLAGS&#125;</span>&quot;</span><br>MAKEOPTS=<span class="hljs-string">&quot;-j25&quot;</span><br><br><span class="hljs-comment"># <span class="hljs-doctag">NOTE:</span> This stage was built with the bindist Use flag enabled</span><br>PORTDIR=<span class="hljs-string">&quot;/var/db/repos/gentoo&quot;</span><br>DISTDIR=<span class="hljs-string">&quot;/var/cache/distfiles&quot;</span><br>PKGDIR=<span class="hljs-string">&quot;/var/cache/binpkgs&quot;</span><br><br><span class="hljs-comment"># This sets the language of build output to English.</span><br><span class="hljs-comment"># Please keep this setting intact when reporting bugs.</span><br>LC_MESSAGES=C<br><br><span class="hljs-comment"># mirrors</span><br>GENTOO_MIRRORS=<span class="hljs-string">&quot;https://mirrors.ustc.edu.cn/gentoo/&quot;</span><br>ACCEPT_LICENSE=<span class="hljs-string">&quot;*&quot;</span><br>ACCEPT_KEYWORDS=<span class="hljs-string">&quot;amd64&quot;</span><br>AUTO_CLEAN=<span class="hljs-string">&quot;yes&quot;</span><br><br><span class="hljs-comment"># aria</span><br>FETCHCOMMAND=<span class="hljs-string">&quot;/usr/bin/aria2c -d \$&#123;DISTDIR&#125; -o \$&#123;FILE&#125; --allow-overwrite=true --max-tries=5 --max-file-not-found=2 --max-concurrent-downloads=5 --connect-timeout=5 --timeout=5 --split=5 --min-split-size=2M --lowest-speed-limit=20K --max-connection-per-server=9 --uri-selector=feedback \$&#123;URI&#125;&quot;</span><br>RESUMECOMMAND=<span class="hljs-string">&quot;<span class="hljs-variable">$&#123;FETCHCOMMAND&#125;</span>&quot;</span><br><br><span class="hljs-comment"># ccache</span><br>FEATURES=<span class="hljs-string">&quot;ccache -test&quot;</span><br>CCACHE_DIR=<span class="hljs-string">&quot;/var/cache/ccache&quot;</span><br><br><span class="hljs-comment"># GRUB</span><br>GRUB_PLATFORMS=<span class="hljs-string">&quot;efi-64&quot;</span><br><br><span class="hljs-comment"># CPUS</span><br>ABI_X86=<span class="hljs-string">&quot;64&quot;</span><br>CPU_FLAGS_X86=<span class="hljs-string">&quot;aes avx avx2 f16c fma3 mmx mmxext pclmul popcnt rdrand sha sse sse2 sse3 sse4_1 sse4_2 sse4a ssse3&quot;</span><br><br><span class="hljs-comment"># cards</span><br>VIDEO_CARDS=<span class="hljs-string">&quot;amdgpu radeonsi vmware&quot;</span><br><br><span class="hljs-comment"># touchpad</span><br><span class="hljs-comment">#INPUT_DEVICES=&quot;libinput synaptics&quot;  ##设置后触摸板配置失效</span><br><br><span class="hljs-comment"># language</span><br>L10N=<span class="hljs-string">&quot;en-US zh-CN en zh&quot;</span><br>LINGUAS=<span class="hljs-string">&quot;en-US zh-CN en zh&quot;</span><br><br><span class="hljs-comment"># USE</span><br><br>SYSME=<span class="hljs-string">&quot;-test -doc systemd&quot;</span><br>GNOME=<span class="hljs-string">&quot;-kde -games -help -extras X gtk gnome&quot;</span><br>USE=<span class="hljs-string">&quot;<span class="hljs-variable">$&#123;SYSME&#125;</span> <span class="hljs-variable">$&#123;GNOME&#125;</span> &quot;</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="3-2-USE"><a href="#3-2-USE" class="headerlink" title="3.2 USE"></a>3.2 USE</h2><p>个人 <code>USE</code> 使用说明：</p>
+<ul>
+<li><code>/etc/portage/make.conf</code> 仅添加必要 <code>flag</code> 且尽量仅添加排除项。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">SYSME=<span class="hljs-string">&quot;-test -doc systemd&quot;</span><br>GNOME=<span class="hljs-string">&quot;-kde -games -help -extras X gtk gnome&quot;</span><br>USE=<span class="hljs-string">&quot;<span class="hljs-variable">$&#123;SYSME&#125;</span> <span class="hljs-variable">$&#123;GNOME&#125;</span> &quot;</span><br></code></pre></td></tr></table></figure></li>
+<li><code>/etc/portage/package.accept_keywords</code> 文件夹中创建文件，添加需要开启 <code>~amd</code>(测试) 属性的包<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">app-office/wps-office ~*<br></code></pre></td></tr></table></figure></li>
+<li><code>/etc/portage/package.use</code> 文件夹中创建文件，添加与 <code>/etc/portage/make.conf</code> 中 <code>USE</code> 相悖或者仅对该包生效的 <code>flag</code><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">app-emulation/qemu spice QEMU_SOFTMMU_TARGETS: x86_64 QEMU_USER_TARGETS: x86_64<br>net-dns/dnsmasq script<br>net-misc/spice-gtk usbredir<br></code></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="4-tools"><a href="#4-tools" class="headerlink" title="4 tools"></a>4 tools</h1><h2 id="4-1-包管理"><a href="#4-1-包管理" class="headerlink" title="4.1 包管理"></a>4.1 包管理</h2><h3 id="4-1-1-app-portage-x2F-eix"><a href="#4-1-1-app-portage-x2F-eix" class="headerlink" title="4.1.1 app-portage&#x2F;eix"></a>4.1.1 app-portage&#x2F;eix</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">app-portage/eix<br>app-portage/gentoolkit<br>app-portage/layman<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-2-文件系统"><a href="#4-2-文件系统" class="headerlink" title="4.2 文件系统"></a>4.2 文件系统</h2><h3 id="4-2-1-sys-fs-x2F-lvm2"><a href="#4-2-1-sys-fs-x2F-lvm2" class="headerlink" title="4.2.1 sys-fs&#x2F;lvm2"></a>4.2.1 sys-fs&#x2F;lvm2</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sys-fs/lvm2<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-2-2-ntfs"><a href="#4-2-2-ntfs" class="headerlink" title="4.2.2 ntfs"></a>4.2.2 ntfs</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sys-fs/ntfs3g<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-3-DE"><a href="#4-3-DE" class="headerlink" title="4.3 DE"></a>4.3 DE</h2><h3 id="4-3-1-gnome"><a href="#4-3-1-gnome" class="headerlink" title="4.3.1 gnome"></a>4.3.1 gnome</h3><blockquote>
+<p>一定要有swap分区，否则编译不会通过<br>make.conf 中 MAKEOPTS&#x3D;”-j4” 此条不存在编译也会失败</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">gnome-base/gnome<br>gnome-base/gconf<br>gnome-extra/gnome-tweaks<br></code></pre></td></tr></table></figure>
+
+<h2 id="4-4-vitual"><a href="#4-4-vitual" class="headerlink" title="4.4 vitual"></a>4.4 vitual</h2><h3 id="4-4-1-virtualbox"><a href="#4-4-1-virtualbox" class="headerlink" title="4.4.1 virtualbox"></a>4.4.1 virtualbox</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">app-emulation/virtualbox<br>app-emulation/virtualbox-additions<br>app-emulation/virtualbox-extpack-oracle<br>app-emulation/virtualbox-modules<br>app-emulation/virtualbox-guest-additions  <span class="hljs-comment"># gentoo虚拟机安装</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="4-4-2-kvm"><a href="#4-4-2-kvm" class="headerlink" title="4.4.2 kvm"></a>4.4.2 kvm</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">app-emulation/qemu<br>app-emulation/libvirt<br>app-emulation/virt-manager<br>net-misc/bridge-utils<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">usermod -a -G libvirt miloo<br>usermod -a -G kvm miloo <br>systemctl <span class="hljs-built_in">enable</span> libvirtd<br>systemctl <span class="hljs-built_in">enable</span> virtlogd-admin.socket<br></code></pre></td></tr></table></figure>
+
+
+<h1 id="5-系统迁移"><a href="#5-系统迁移" class="headerlink" title="5 系统迁移"></a>5 系统迁移</h1><h2 id="5-1-权限备份与恢复"><a href="#5-1-权限备份与恢复" class="headerlink" title="5.1 权限备份与恢复"></a>5.1 权限备份与恢复</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">getfacl -R ./ &gt; acl.txt<br>setfacl --restore=acl.txt<br></code></pre></td></tr></table></figure>
+
+<h2 id="5-2-用户组"><a href="#5-2-用户组" class="headerlink" title="5.2 用户组"></a>5.2 用户组</h2><figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gcode">用户id=<span class="hljs-number">1001</span><span class="hljs-comment">(miloo)</span> 组id=<span class="hljs-number">100</span><span class="hljs-comment">(users)</span> 组=<span class="hljs-number">100</span><span class="hljs-comment">(users)</span>,<span class="hljs-number">10</span><span class="hljs-comment">(wheel)</span>,<span class="hljs-number">11</span><span class="hljs-comment">(floppy)</span>,<span class="hljs-number">18</span><span class="hljs-comment">(audio)</span>,<span class="hljs-number">19</span><span class="hljs-comment">(cdrom)</span>,<span class="hljs-number">27</span><span class="hljs-comment">(video)</span>,<span class="hljs-number">85</span><span class="hljs-comment">(usb)</span>,<span class="hljs-number">78</span><span class="hljs-comment">(kvm)</span>,<span class="hljs-number">272</span><span class="hljs-comment">(plugdev)</span>,<span class="hljs-number">172</span><span class="hljs-comment">(pulse-access)</span>,<span class="hljs-number">304</span><span class="hljs-comment">(vboxusers)</span>,<span class="hljs-number">79</span><span class="hljs-comment">(libvirt)</span><br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Linux/Gentoo/" class="category-chain-item">Gentoo</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Linux/">#Linux</a>
+      
+        <a href="/tags/Gentoo/">#Gentoo</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Gentoo 配置手册</div>
+      <div>https://imiloo.github.io/2022/07/04/2022-07-04.gentoo配置手册/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>miloo</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年7月4日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/07/14/2022-07-14.kvm%E6%98%BE%E5%8D%A1%E7%9B%B4%E9%80%9A/" title="kvm 显卡直通(单显卡)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">kvm 显卡直通(单显卡)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/06/17/2022-06-17.%E7%BB%8F%E5%85%B8%E6%BC%8F%E6%B4%9E-%E5%BC%B1%E5%8F%A3%E4%BB%A4/" title="经典漏洞-弱口令">
+                        <span class="hidden-mobile">经典漏洞-弱口令</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'imiloo/imiloo.github.io');
+      s.setAttribute('issue-term', 'title');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
