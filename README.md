@@ -1,7 +1,7 @@
-## Welcome to miloo's blog
+## Welcome to worisur's blog
 
-### [gitlab博客地址(国内用户点击此处)](https://imiloo.gitlab.io) 
-### [github博客地址](https://imiloo.github.io)
+### [gitlab博客地址(国内用户点击此处)](https://worisur.gitlab.io) 
+### [github博客地址](https://worisur.github.io)
 
 ### 声明
 - 博客个人笔记欢迎大家参考、转载，转载请注明出处。
