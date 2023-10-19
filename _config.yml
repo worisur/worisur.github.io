@@ -65,19 +65,10 @@ index_generator:
   per_page: 20
   order_by: -date
 
-archive_generator:
-  per_page: 50
-
 # Category & Tag
 default_category: uncategorized
 category_map:
 tag_map:
-
-tag_generator:
-  per_page: 20
-
-category_generator: 
-  per_page: 20
 # Metadata elements
 ## https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta
 meta_generator: true
