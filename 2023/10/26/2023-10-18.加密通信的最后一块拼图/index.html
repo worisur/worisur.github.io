@@ -16,13 +16,13 @@
   <meta name="author" content="worisur">
   <meta name="keywords" content="">
   
-    <meta name="description" content="vmdk、vdi、linux">
+    <meta name="description" content="DNS、加密">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>虚拟机磁盘挂载 - worisur&#39;s blog</title>
+  <title>加密通信的最后一块拼图(先有鸡还是先有蛋？) - worisur&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -203,7 +203,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="虚拟机磁盘挂载"></span>
+            <span id="subtitle" data-typed-text="加密通信的最后一块拼图(先有鸡还是先有蛋？)"></span>
           
         </div>
 
@@ -214,8 +214,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-10-18 08:30" pubdate>
-          2023年10月18日 早上
+        <time datetime="2023-10-26 22:00" pubdate>
+          2023年10月26日 晚上
         </time>
       </span>
     
@@ -227,7 +227,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          738 字
+          1.2k 字
         
       </span>
     
@@ -239,7 +239,7 @@
         
         
           <!-- compatible with older versions-->
-          7 分钟
+          10 分钟
         
       </span>
     
@@ -277,20 +277,25 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">虚拟机磁盘挂载</h1>
+            <h1 style="display: none">加密通信的最后一块拼图(先有鸡还是先有蛋？)</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="1-使用-nbd-驱动模块"><a href="#1-使用-nbd-驱动模块" class="headerlink" title="1 使用 nbd 驱动模块"></a>1 使用 nbd 驱动模块</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 安装 nbd </span><br>pacman -S qemu-utils<br><br><span class="hljs-comment"># 使用</span><br>sudo modprobe nbd<br><br><span class="hljs-comment"># 查看 nbd 生效情况</span><br>lsblk <br><br>NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS<br>nbd0         43:0    0    0B  0 disk<br>nbd1         43:32   0  211G  1 disk<br>nbd2         43:64   0    0B  0 disk<br>nbd3         43:96   0    0B  0 disk<br>nbd4         43:128  0    0B  0 disk<br>nbd5         43:160  0    0B  0 disk<br>nbd6         43:192  0    0B  0 disk<br>nbd7         43:224  0    0B  0 disk<br></code></pre></td></tr></table></figure>
-
-<h2 id="1-1-从-vmdk-映射到网络设备"><a href="#1-1-从-vmdk-映射到网络设备" class="headerlink" title="1.1 从 vmdk 映射到网络设备"></a>1.1 从 vmdk 映射到网络设备</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo qemu-nbd -r -c /dev/nbd1 ./vnios-disk.vmdk <br><br>NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS<br>nbd0         43:0    0    0B  0 disk<br>nbd1         43:32   0  211G  1 disk<br>├─nbd1p1     43:33   0 1000M  1 part<br>├─nbd1p2     43:34   0   10G  1 part<br>└─nbd1p3     43:35   0  200G  1 part<br></code></pre></td></tr></table></figure>
-
-<h2 id="1-2-从-vdi-映射到网络设备"><a href="#1-2-从-vdi-映射到网络设备" class="headerlink" title="1.2 从 vdi 映射到网络设备"></a>1.2 从 vdi 映射到网络设备</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo qemu-nbd -c /dev/nbd1 ./vnios-disk.vdi <br><br>NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS<br>nbd0         43:0    0    0B  0 disk<br>nbd1         43:32   0  211G  1 disk<br>├─nbd1p1     43:33   0 1000M  1 part<br>├─nbd1p2     43:34   0   10G  1 part<br>└─nbd1p3     43:35   0  200G  1 part<br></code></pre></td></tr></table></figure>
-
-<h1 id="2-卸载驱动模块"><a href="#2-卸载驱动模块" class="headerlink" title="2 卸载驱动模块"></a>2 卸载驱动模块</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash"><br><span class="hljs-comment"># 关闭 vmdk 的映射</span><br>qemu-nbd -d /dev/nbd1<br><br><span class="hljs-comment"># 卸载驱动模块</span><br>sudo modprobe -r nbd<br><br></code></pre></td></tr></table></figure>
-
-
+                <blockquote>
+<p>世界最大的 CDN 服务商 Cloudflare 发了一篇博客文章，宣称解决了”加密通信的最后一块拼图”。<br>网络安全从业者工作难度增加！！！</p>
+</blockquote>
+<h1 id="什么是加密的-SNI（ESNI）"><a href="#什么是加密的-SNI（ESNI）" class="headerlink" title="什么是加密的 SNI（ESNI）"></a>什么是加密的 SNI（ESNI）</h1><p>加密的服务器名称指示（ESNI）是保护用户浏览数据的私密性的一项重要功能。它确保正在侦听的第三方无法监视 TLS 握手流程并以此确定用户正在访问哪些网站。顾名思义，ESNI 通过加密 TLS 握手的服务器名称指示（SNI）部分来实现其目的。</p>
+<p>SNI 告诉 Web 服务器在客户端与服务器之间的连接开始时显示哪个 TLS 证书。SNI 是 TLS 协议的补充，它使服务器可以在同一 IP 地址上托管多个 TLS 证书。</p>
+<p>可以将 SNI 视为邮寄地址的公寓号码：一栋大楼中有多间公寓，因此每间公寓都需要一个不同的编号来加以区分。类似地，虽然服务器由 IP 地址标示，但是客户端设备需要在其发送给服务器的第一条消息中包括 SNI，以指示其试图访问哪个网站（哪间公寓）。</p>
+<h1 id="底层逻辑"><a href="#底层逻辑" class="headerlink" title="底层逻辑"></a>底层逻辑</h1><p>底层加密机制涉及使用Diffie-Hellman 密钥交换算法，该算法允许客户端和服务器通过不受信任的通道生成共享加密密钥。因此，加密的 SNI 加密密钥是在客户端使用服务器的公钥（实际上是 Diffie-Hellman 半静态密钥共享的公共部分）和由以下方法生成的临时 Diffie-Hellman 共享的私有部分来计算的：客户端本身是动态的，并在 ClientHello 发送到服务器后立即被丢弃。附加数据（例如客户端作为其 ClientHello 消息的一部分发送的一些加密参数）也混合到加密过程中以进行良好的测量。</p>
+<p>然后，客户端的 ESNI 扩展将不仅包括实际加密的 SNI 位，还包括客户端的公钥共享、用于加密的密码套件以及服务器的 ESNI DNS 记录的摘要。另一方面，服务器使用自己的私钥共享和客户端共享的公共部分来生成加密密钥并解密扩展。</p>
+<p>虽然这看起来过于复杂，但这确保了加密密钥以加密方式与其生成的特定 TLS 会话相关联，并且不能在多个连接中重复使用。这可以防止攻击者观察客户端发送的加密扩展，只需捕获它并在单独的会话中将其重播到服务器，以揭露用户尝试连接的网站的身份（这称为“剪切”）并粘贴”攻击）。</p>
+<p>然而，服务器私钥的泄露将使从其生成的所有 ESNI 对称密钥面临危险（这将允许观察者解密之前收集的加密数据），这就是为什么 Cloudflare 自己的 SNI 加密实现每小时轮换服务器密钥以提高前向保密性，但会跟踪前几个小时的密钥，以允许 DNS 缓存和复制延迟，以便密钥稍微过时的客户端仍然可以毫无问题地使用 ESNI（但最终所有密钥都会被丢弃和遗忘）。</p>
+<h1 id="新的技术"><a href="#新的技术" class="headerlink" title="新的技术"></a>新的技术</h1><p>Cloudflare 将免费启用加密 SNI，因此无需执行任何操作即可在 Cloudflare 网站上启用它。在浏览器方面，Firefox 预计本周将在Firefox Nightly中添加加密 SNI 支持</p>
+<blockquote>
+<p>Tips：，加密 SNI 规范仍在开发中，因此还不稳定。</p>
+</blockquote>
 
                 
               </div>
@@ -309,15 +314,8 @@
     
       <span class="category-chain">
         
-  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  <a href="/categories/Security/" class="category-chain-item">Security</a>
   
-  
-    <span>></span>
-    
-  <a href="/categories/Linux/Virtualization/" class="category-chain-item">Virtualization</a>
-  
-  
-
   
 
       </span>
@@ -331,9 +329,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Linux/">#Linux</a>
-      
-        <a href="/tags/Virtualization/">#Virtualization</a>
+        <a href="/tags/Security/">#Security</a>
       
     </div>
   
@@ -345,8 +341,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>虚拟机磁盘挂载</div>
-      <div>https://worisur.github.io/2023/10/18/2023-10-18.挂载读取虚拟化磁盘/</div>
+      <div>加密通信的最后一块拼图(先有鸡还是先有蛋？)</div>
+      <div>https://worisur.github.io/2023/10/26/2023-10-18.加密通信的最后一块拼图/</div>
     </div>
     <div class="license-meta">
       
@@ -358,7 +354,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年10月18日</div>
+          <div>2023年10月26日</div>
         </div>
       
       
@@ -390,18 +386,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/10/26/2023-10-18.%E5%8A%A0%E5%AF%86%E9%80%9A%E4%BF%A1%E7%9A%84%E6%9C%80%E5%90%8E%E4%B8%80%E5%9D%97%E6%8B%BC%E5%9B%BE/" title="加密通信的最后一块拼图(先有鸡还是先有蛋？)">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">加密通信的最后一块拼图(先有鸡还是先有蛋？)</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/03/20/2023-03-20.codecombat%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/" title="Docker 搭建 codecombat 本地服务">
-                        <span class="hidden-mobile">Docker 搭建 codecombat 本地服务</span>
+                      <a href="/2023/10/18/2023-10-18.%E6%8C%82%E8%BD%BD%E8%AF%BB%E5%8F%96%E8%99%9A%E6%8B%9F%E5%8C%96%E7%A3%81%E7%9B%98/" title="虚拟机磁盘挂载">
+                        <span class="hidden-mobile">虚拟机磁盘挂载</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
