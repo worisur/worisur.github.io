@@ -16,13 +16,13 @@
   <meta name="author" content="worisur">
   <meta name="keywords" content="">
   
-    <meta name="description" content="甜蜜、幸福、撒狗粮……">
+    <meta name="description" content="硬件、计算机组成……">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>北京环球影视城游记 - worisur&#39;s blog</title>
+  <title>计算机组成原理-指令和运算 - worisur&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -201,7 +201,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="北京环球影视城游记"></span>
+            <span id="subtitle" data-typed-text="计算机组成原理-指令和运算"></span>
           
         </div>
 
@@ -212,8 +212,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-12-14 15:00" pubdate>
-          2023年12月14日 下午
+        <time datetime="2024-03-18 10:00" pubdate>
+          2024年3月18日 上午
         </time>
       </span>
     
@@ -225,7 +225,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          326 字
+          2.5k 字
         
       </span>
     
@@ -237,7 +237,7 @@
         
         
           <!-- compatible with older versions-->
-          3 分钟
+          21 分钟
         
       </span>
     
@@ -274,102 +274,121 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">北京环球影视城游记</h1>
-            
-              <p id="updated-time" class="note note-info" style="">
-                
-                  
-                    <!-- compatible with older versions-->
-                    本文最后更新于：2023年12月14日 下午
-                  
-                
-              </p>
+            <h1 id="seo-header">计算机组成原理-指令和运算</h1>
             
             
               <div class="markdown-body">
                 
-                <blockquote>
-<p>唯一一张美颜的照片被用作游记片头，如果有人过敏实在很不好意思……</p>
+                <h1 id="1-计算机指令"><a href="#1-计算机指令" class="headerlink" title="1 计算机指令"></a>1 计算机指令</h1><p>&emsp;&emsp;计算机指令集，英文叫 Instruction Set。这里面的“Set”，其实就是数学上的集合，代表不同的单词、语法。</p>
+<p>&emsp;&emsp;要让一段程序在一个 Linux 操作系统上跑起来，我们需要把整个程序翻译成一个汇编语言（ASM，Assembly Language）的程序，这个过程我们一般叫编译（Compile）成汇编代码。</p>
+<p>&emsp;&emsp;针对汇编代码，我们可以再用汇编器（Assembler）翻译成机器码（Machine Code）。这些机器码由“0”和“1”组成的机器语言表示。这一条条机器码，就是一条条的计算机指令。这样一串串的 16 进制数字，就是我们 CPU 能够真正认识的计算机指令。</p>
+<p><img src="/img/article/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%9F%E7%90%86/%E7%BC%96%E8%AF%91%E6%B1%87%E7%BC%96.png" srcset="/img/loading.gif" lazyload alt="编译汇编"></p>
+<blockquote>
+<p>&emsp;&emsp;C语言&gt;汇编语言&gt;机器语言 一般是这样的编译顺序，为什么不是 C语言&gt;机器语言 一步到位这样编译呢？</p>
 </blockquote>
 <blockquote>
-<p>早已计划好的北京之行，以及突然发生的一点小意外……</p>
+<p>&emsp;&emsp;其实有一步到位的，就是两个步骤都通过一个命令先后执行，顺序完成，gcc现在就可以一个命令直接变成可执行的binary。只是为了方便debug，你可以认为通过机器语言我们也可以反推出汇编语言长什么样子。</p>
 </blockquote>
-<p><img src="/img/article/%E5%8C%97%E4%BA%AC%E7%8E%AF%E7%90%83%E5%BD%B1%E8%A7%86%E5%9F%8E%E6%B8%B8%E8%AE%B0/%E5%90%88%E7%85%A71.JPG" srcset="/img/loading.gif" lazyload alt="门口合照1"></p>
-<p><img src="/img/article/%E5%8C%97%E4%BA%AC%E7%8E%AF%E7%90%83%E5%BD%B1%E8%A7%86%E5%9F%8E%E6%B8%B8%E8%AE%B0/%E5%90%88%E7%85%A73.JPEG" srcset="/img/loading.gif" lazyload alt="门口合照2"></p>
-<p>本以为环球影视城人会很多，结果人挺少的，很多项目都完成了二刷：</p>
-<table>
+<p>&emsp;&emsp;在Linux 操作系统上，可以简单地使用 gcc 和 objdump 这样两条命令，把对应的汇编代码和机器码都打印出来。</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cmake">$ gcc -g -c <span class="hljs-keyword">test</span>.c<br>$ objdump -d -M intel -S <span class="hljs-keyword">test</span>.o<br></code></pre></td></tr></table></figure>
+
+<h2 id="1-1-常见-的解析指令和机器码"><a href="#1-1-常见-的解析指令和机器码" class="headerlink" title="1.1 常见 的解析指令和机器码"></a>1.1 常见 的解析指令和机器码</h2><table>
 <thead>
 <tr>
 <th>编号</th>
-<th>项目</th>
-<th>次数</th>
-<th>备注</th>
+<th>指令类型</th>
+<th>说明</th>
+<th>示例命令</th>
+<th>示例汇编代码</th>
+<th>含义</th>
+<th>注释</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>1</td>
-<td>火种源争夺战</td>
-<td>3次</td>
-<td>一定要去，最后一下特别刺激</td>
+<td>算术类指令</td>
+<td>加减乘除，在 CPU 层面，都会变成一条条算术类指令</td>
+<td>add</td>
+<td><code>add $s1,$s2,$s3</code></td>
+<td><code>$s1=$s2+$s3</code></td>
+<td>将 s2 和 s3 寄存器中的数相加后的结果放到寄存器 s1 中</td>
 </tr>
 <tr>
 <td>2</td>
-<td>哈利波特（名字忘了）</td>
-<td>2次</td>
-<td>挺刺激，（晕3D的玩家别去了，有人直接吐了，火种源也是有人吐了）</td>
+<td>逻辑类指令</td>
+<td>逻辑上的与或非</td>
+<td>or</td>
+<td><code>or $s1,$s2,$s3</code></td>
+<td>&#96;$s1&#x3D;$s2</td>
+<td>$s3&#96;</td>
 </tr>
 <tr>
 <td>3</td>
-<td>侏罗纪历险记</td>
-<td>2次</td>
-<td>类似火种源</td>
+<td>数据传输指令</td>
+<td>给变量赋值、在内存里读写数据，用的都是数据传输类指令</td>
+<td>load word</td>
+<td><code>load $s1,10($s2)</code></td>
+<td><code>$s1=memory($s2+10)</code></td>
+<td>取 s2 寄存器中的数，加上10偏移量后，找到内存中的字，存入到s1寄存器中</td>
 </tr>
 <tr>
 <td>4</td>
-<td>飞跃侏罗纪</td>
-<td>2次</td>
-<td>胆子小的可以坐在中间</td>
+<td>条件分支类指令</td>
+<td>“if&#x2F;else”之类的指令</td>
+<td>branch on equal</td>
+<td><code>beq $s1,$s210</code></td>
+<td><code>if($s1 == $s2) go to PC+4+10</code></td>
+<td>如果 s1 和 s2 寄存器内的值相等,从程序计数器往后跳10</td>
 </tr>
 <tr>
 <td>5</td>
-<td>小黄人闹翻天（忘记名字了）</td>
-<td>1 次</td>
-<td>时间挺久，挺刺激</td>
-</tr>
-<tr>
-<td>6</td>
-<td>功夫熊猫（旋转木马）</td>
-<td>1 次</td>
-<td>浪漫</td>
-</tr>
-<tr>
-<td>7</td>
-<td>功夫熊猫（竹篮子）</td>
-<td>1 次</td>
-<td>排队30分钟，体验30秒，不爽</td>
-</tr>
-<tr>
-<td>8</td>
-<td>霸天虎过山车</td>
-<td>0 次</td>
-<td>仅限勇士挑战，我两人都没有那个胆子</td>
+<td>无条件跳转指令</td>
+<td>调用函数的时候，就是发起了一个无条件跳转指令</td>
+<td>jump</td>
+<td><code>j 1000</code></td>
+<td><code>go to 1000</code></td>
+<td>跳转到 1000 这个目标地址</td>
 </tr>
 </tbody></table>
-<p>还有很多值得看的小节目：</p>
-<p>比如驯龙高手、影视作品拍摄记录（好像叫这个名字，记不太住……）</p>
-<p><img src="/img/article/%E5%8C%97%E4%BA%AC%E7%8E%AF%E7%90%83%E5%BD%B1%E8%A7%86%E5%9F%8E%E6%B8%B8%E8%AE%B0/%E5%90%88%E7%85%A72.JPEG" srcset="/img/loading.gif" lazyload alt="合照3"></p>
-<p>旋转木马上的小可爱：</p>
-<p><img src="/img/article/%E5%8C%97%E4%BA%AC%E7%8E%AF%E7%90%83%E5%BD%B1%E8%A7%86%E5%9F%8E%E6%B8%B8%E8%AE%B0/%E5%B0%8F%E5%8F%AF%E7%88%B11.JPEG" srcset="/img/loading.gif" lazyload alt="小可爱1"></p>
-<p><img src="/img/article/%E5%8C%97%E4%BA%AC%E7%8E%AF%E7%90%83%E5%BD%B1%E8%A7%86%E5%9F%8E%E6%B8%B8%E8%AE%B0/%E5%B0%8F%E5%8F%AF%E7%88%B12.JPEG" srcset="/img/loading.gif" lazyload alt="小可爱2"></p>
-<p>乱入一张前一天拍的：</p>
-<p><img src="/img/article/%E5%8C%97%E4%BA%AC%E7%8E%AF%E7%90%83%E5%BD%B1%E8%A7%86%E5%9F%8E%E6%B8%B8%E8%AE%B0/%E5%90%88%E7%85%A73.JPG" srcset="/img/loading.gif" lazyload alt="合照4"></p>
-<p>发生了一点小意外，于是有了这几张当天最美好的收获……</p>
-<p><img src="/img/article/%E5%8C%97%E4%BA%AC%E7%8E%AF%E7%90%83%E5%BD%B1%E8%A7%86%E5%9F%8E%E6%B8%B8%E8%AE%B0/%E5%B0%8F%E6%84%8F%E5%A4%960.JPEG" srcset="/img/loading.gif" lazyload alt="小意外0"></p>
-<p><img src="/img/article/%E5%8C%97%E4%BA%AC%E7%8E%AF%E7%90%83%E5%BD%B1%E8%A7%86%E5%9F%8E%E6%B8%B8%E8%AE%B0/%E5%B0%8F%E6%84%8F%E5%A4%961.JPEG" srcset="/img/loading.gif" lazyload alt="小意外1"></p>
-<p><img src="/img/article/%E5%8C%97%E4%BA%AC%E7%8E%AF%E7%90%83%E5%BD%B1%E8%A7%86%E5%9F%8E%E6%B8%B8%E8%AE%B0/%E5%B0%8F%E6%84%8F%E5%A4%962.JPEG" srcset="/img/loading.gif" lazyload alt="小意外2"></p>
-<p><img src="/img/article/%E5%8C%97%E4%BA%AC%E7%8E%AF%E7%90%83%E5%BD%B1%E8%A7%86%E5%9F%8E%E6%B8%B8%E8%AE%B0/%E5%B0%8F%E6%84%8F%E5%A4%963.JPEG" srcset="/img/loading.gif" lazyload alt="小意外3"></p>
-<p><img src="/img/article/%E5%8C%97%E4%BA%AC%E7%8E%AF%E7%90%83%E5%BD%B1%E8%A7%86%E5%9F%8E%E6%B8%B8%E8%AE%B0/%E5%B0%8F%E6%84%8F%E5%A4%964.JPEG" srcset="/img/loading.gif" lazyload alt="小意外4"></p>
-
+<h1 id="2-寄存器"><a href="#2-寄存器" class="headerlink" title="2 寄存器"></a>2 寄存器</h1><p>&emsp;&emsp;一个 CPU 有多个寄存器, 每个寄存器都有各自的名字; 如 64 位处理器,有 16 个寄存器(RAX、RBX、RCX、RDX、RSI、RDI、RBP、RSP、CS、DS、ES、SS、FS、GS、RIP、RFLAGS)</p>
+<p>&emsp;&emsp;三个特殊的寄存器:</p>
+<p><img src="/img/article/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%9F%E7%90%86/%E7%89%B9%E6%AE%8A%E7%9A%84%E5%AF%84%E5%AD%98%E5%99%A8.jpg" srcset="/img/loading.gif" lazyload alt="特殊的寄存器"></p>
+<h1 id="3-链接"><a href="#3-链接" class="headerlink" title="3 链接"></a>3 链接</h1><p>&emsp;&emsp;Linux 和 Windows 中的链接各式不同, linux 下为 ELF 格式, Windows 下为 PE 格式;</p>
+<blockquote>
+<p>&emsp;&emsp;如果我们有一个可以能够解析 PE 格式的装载器，我们就有可能在 Linux 下运行 Windows 程序了。这样的程序真的存在吗？没错，Linux 下著名的开源项目 Wine，就是通过兼容 PE 格式的装载器，使得我们能直接在 Linux 下运行 Windows 程序的。而现在微软的 Windows 里面也提供了 WSL，也就是 Windows Subsystem for Linux，可以解析和加载 ELF 格式的文件</p>
+</blockquote>
+<h2 id="3-1-ELF-链接"><a href="#3-1-ELF-链接" class="headerlink" title="3.1 ELF 链接"></a>3.1 ELF 链接</h2><p>&emsp;&emsp; ELF（Execuatable and Linkable File Format） 中文名字叫可执行与可链接文件格式，这里面不仅存放了编译成的汇编指令，还保留了很多别的数据</p>
+<p><img src="/img/article/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%9F%E7%90%86/ELF%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E4%BF%A1%E6%81%AF.jpg" srcset="/img/loading.gif" lazyload alt="ELF文件格式信息"></p>
+<h2 id="3-2-PE-链接"><a href="#3-2-PE-链接" class="headerlink" title="3.2 PE 链接"></a>3.2 PE 链接</h2><p>&emsp;&emsp;Windows 的可执行文件格式是一种叫作PE（Portable Executable Format）的文件格式</p>
+<h1 id="4-程序装载"><a href="#4-程序装载" class="headerlink" title="4 程序装载"></a>4 程序装载</h1><p>&emsp;&emsp;在运行这些可执行文件的时候，其实是通过一个装载器，解析 ELF 或者 PE 格式的可执行文件。装载器会把对应的指令和数据加载到内存里面来，让 CPU 去执行</p>
+<p>&emsp;&emsp;实际上装载器需要满足两个要求:</p>
+<ol>
+<li>可执行程序加载后占用的内存空间应该是连续的。执行指令的时候，程序计数器是顺序地一条一条指令执行下去。这也就意味着，这一条条指令需要连续地存储在一起</li>
+<li>正常情况下需要同时加载很多个程序，并且不能让程序自己规定在内存中加载的位置。虽然编译出来的指令里已经有了对应的各种各样的内存地址，但是实际加载的时候，其实没有办法确保，这个程序一定加载在哪一段内存地址上。因为现在的计算机通常会同时运行很多个程序，可能你想要的内存地址已经被其他加载了的程序占用了</li>
+</ol>
+<h2 id="4-1-虚拟内存地址"><a href="#4-1-虚拟内存地址" class="headerlink" title="4.1 虚拟内存地址"></a>4.1 虚拟内存地址</h2><p>&emsp;&emsp;为了满足这两个基本要求, 可以在内存里面，找到一段连续的内存空间，然后分配给装载的程序，然后把这段连续的内存空间地址，和整个程序指令里指定的内存地址做一个映射</p>
+<p>&emsp;&emsp;指令里用到的内存地址叫作虚拟内存地址（Virtual Memory Address），实际在内存硬件里面的空间地址，我们叫物理内存地址（Physical Memory Address）</p>
+<h2 id="4-2-内存分段和内存交换"><a href="#4-2-内存分段和内存交换" class="headerlink" title="4.2 内存分段和内存交换"></a>4.2 内存分段和内存交换</h2><p>&emsp;&emsp;找出一段连续的物理内存和虚拟内存地址进行映射的方法，我们叫分段（Segmentation）。这里的段，就是指系统分配出来的那个连续的内存空间。</p>
+<p><img src="/img/article/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%9F%E7%90%86/%E5%86%85%E5%AD%98%E7%A2%8E%E7%89%87.png" srcset="/img/loading.gif" lazyload alt="内存碎片"></p>
+<p>&emsp;&emsp;内存碎片的解决方式: 内存交换</p>
+<h2 id="4-3-内存分页"><a href="#4-3-内存分页" class="headerlink" title="4.3 内存分页"></a>4.3 内存分页</h2><p>&emsp;&emsp;虚拟内存、分段，再加上内存交换，看起来似乎已经解决了计算机同时装载运行很多个程序的问题。不过，这三者的组合仍然会遇到一个性能瓶颈。硬盘的访问速度要比内存慢很多，而每一次内存交换，都需要把一大段连续的内存数据写到硬盘上。所以，如果内存交换的时候，交换的是一个很占内存空间的程序，这样整个机器都会显得卡顿。</p>
+<p>&emsp;&emsp;既然问题出在内存碎片和内存交换的空间太大上，那么解决问题的办法就是，少出现一些内存碎片。另外，当需要进行内存交换的时候，让需要交换写入或者从磁盘装载的数据更少一点，这样就可以解决这个问题。这个办法，在现在计算机的内存管理里面，就叫作内存分页（Paging）。</p>
+<p>&emsp;&emsp;和分段这样分配一整段连续的空间给到程序相比，分页是把整个物理内存空间切成一段段固定尺寸的大小。而对应的程序所需要占用的虚拟内存空间，也会同样切成一段段固定尺寸的大小。这样一个连续并且尺寸固定的内存空间，我们叫页（Page）。从虚拟内存到物理内存的映射，不再是拿整段连续的内存的物理地址，而是按照一个一个页来的。页的尺寸一般远远小于整个程序的大小。</p>
+<p>&emsp;&emsp;Linux 下内存页大小的查看方式: <code>getconf PAGE_SIZE</code></p>
+<p>&emsp;&emsp;分页的方式在加载程序的时候，不再需要一次性都把程序加载到物理内存中。当要读取特定的页，却发现数据并没有加载到物理内存里的时候，就会触发一个来自于 CPU 的缺页错误（Page Fault）。操作系统会捕捉到这个错误，然后将对应的页，从存放在硬盘上的虚拟内存里读取出来，加载到物理内存里。</p>
+<p>&emsp;&emsp;这种方式，可以运行那些远大于我们实际物理内存的程序。同时，这样一来，任何程序都不需要一次性加载完所有指令和数据，只需要加载当前需要用到就行了。</p>
+<h1 id="5-动态链接库"><a href="#5-动态链接库" class="headerlink" title="5 动态链接库"></a>5 动态链接库</h1><p><img src="/img/article/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%9F%E7%90%86/%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E7%9A%84%E9%97%AE%E9%A2%98.jpg" srcset="/img/loading.gif" lazyload alt="内存占用的问题"></p>
+<p>&emsp;&emsp;在 Windows 下，共享库文件就是.dll 文件，也就是 Dynamic-Link Libary（DLL，动态链接库）。在 Linux 下，共享库文件就是.so 文件，也就是 Shared Object（一般也称之为动态链接库）。</p>
+<p><img src="/img/article/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%9F%E7%90%86/%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93.jpg" srcset="/img/loading.gif" lazyload alt="动态链接库"></p>
+<p>&emsp;&emsp;对于所有动态链接共享库的程序来讲，虽然共享库用的都是同一段物理内存地址，但是在不同的应用程序里，它所在的虚拟内存地址是不同的。</p>
+<p><img src="/img/article/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%9F%E7%90%86/%E5%85%B1%E4%BA%AB%E5%90%8C%E4%B8%80%E6%AE%B5%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98.jpg" srcset="/img/loading.gif" lazyload alt="共享同一段物理内存"></p>
+<h2 id="5-1-动态链接库寻址"><a href="#5-1-动态链接库寻址" class="headerlink" title="5.1 动态链接库寻址"></a>5.1 动态链接库寻址</h2><p><img src="/img/article/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%9F%E7%90%86/show_me_poor.jpg" srcset="/img/loading.gif" lazyload alt="show_me_poor"></p>
+<p>&emsp;&emsp;在共享库的 data section 里面，保存了一张全局偏移表（GOT，Global Offset Table）。虽然共享库的代码部分的物理内存是共享的，但是数据部分是各个动态链接它的应用程序里面各加载一份的。所有需要引用当前共享库外部的地址的指令，都会查询 GOT，来找到当前运行程序的虚拟内存里的对应位置。而 GOT 表里的数据，则是在加载一个个共享库的时候写进去的。</p>
+<h1 id="6-编码与数字"><a href="#6-编码与数字" class="headerlink" title="6 编码与数字"></a>6 编码与数字</h1><p>&emsp;&emsp;ASCII 码</p>
+<p><img src="/img/article/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8E%9F%E7%90%86/ASCII%E7%A0%81%E8%A1%A8.png" srcset="/img/loading.gif" lazyload alt="ASCII 码"></p>
+<p>&emsp;&emsp;ASCII 码只表示了 128 个字符，一开始倒也堪用，毕竟计算机是在美国发明的。然而随着越来越多的不同国家的人都用上了计算机，想要表示譬如中文这样的文字，128 个字符显然是不太够用的。于是，计算机工程师们开始各显神通，给自己国家的语言创建了对应的字符集（Charset）和字符编码（Character Encoding）。</p>
+<p>&emsp;&emsp;而字符编码则是对应字符集里的这些字符，一一用二进制表示出来。Unicode 就可以用 UTF-8、UTF-16，乃至 UTF-32 来进行编码，存储成二进制。</p>
+<h1 id="7-门电路"><a href="#7-门电路" class="headerlink" title="7 门电路"></a>7 门电路</h1><h1 id="8-浮点数和定点数"><a href="#8-浮点数和定点数" class="headerlink" title="8 浮点数和定点数"></a>8 浮点数和定点数</h1>
                 
               </div>
             
@@ -387,15 +406,8 @@
     
       <span class="category-chain">
         
-  <a href="/categories/Life/" class="category-chain-item">Life</a>
+  <a href="/categories/Hardware/" class="category-chain-item">Hardware</a>
   
-  
-    <span>></span>
-    
-  <a href="/categories/Life/Diary/" class="category-chain-item">Diary</a>
-  
-  
-
   
 
       </span>
@@ -409,9 +421,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Life/" class="print-no-link">#Life</a>
-      
-        <a href="/tags/Diary/" class="print-no-link">#Diary</a>
+        <a href="/tags/Hardware/" class="print-no-link">#Hardware</a>
       
     </div>
   
@@ -423,8 +433,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>北京环球影视城游记</div>
-      <div>https://worisur.github.io/2023/12/14/2023-12-10.北京环球影视城游记/</div>
+      <div>计算机组成原理-指令和运算</div>
+      <div>https://worisur.github.io/2024/03/18/2024-03-18.计算机组成原理-指令和运算/</div>
     </div>
     <div class="license-meta">
       
@@ -436,7 +446,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年12月14日</div>
+          <div>2024年3月18日</div>
         </div>
       
       
@@ -468,9 +478,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/03/18/2024-03-18.%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E6%8C%87%E4%BB%A4%E5%92%8C%E8%BF%90%E7%AE%97/" title="计算机组成原理-指令和运算">
+                      <a href="/2024/03/18/2024-03-18.%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90/" title="计算机组成原理-基本组成">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">计算机组成原理-指令和运算</span>
+                        <span class="hidden-mobile">计算机组成原理-基本组成</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -478,8 +488,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/10/26/2023-10-18.%E5%8A%A0%E5%AF%86%E9%80%9A%E4%BF%A1%E7%9A%84%E6%9C%80%E5%90%8E%E4%B8%80%E5%9D%97%E6%8B%BC%E5%9B%BE/" title="加密通信的最后一块拼图(先有鸡还是先有蛋？)">
-                        <span class="hidden-mobile">加密通信的最后一块拼图(先有鸡还是先有蛋？)</span>
+                      <a href="/2023/12/14/2023-12-10.%E5%8C%97%E4%BA%AC%E7%8E%AF%E7%90%83%E5%BD%B1%E8%A7%86%E5%9F%8E%E6%B8%B8%E8%AE%B0/" title="北京环球影视城游记">
+                        <span class="hidden-mobile">北京环球影视城游记</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
