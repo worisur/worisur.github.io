@@ -16,13 +16,13 @@
   <meta name="author" content="worisur">
   <meta name="keywords" content="">
   
-    <meta name="description" content="信息、泄漏……">
+    <meta name="description" content="文件系统、raid1 ……">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>浏览一个网页会泄露什么信息 - worisur&#39;s blog</title>
+  <title>btrfs关于raid1的问题处理 - worisur&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -201,7 +201,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="浏览一个网页会泄露什么信息"></span>
+            <span id="subtitle" data-typed-text="btrfs关于raid1的问题处理"></span>
           
         </div>
 
@@ -212,8 +212,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-02-22 15:00" pubdate>
-          2024年2月22日 下午
+        <time datetime="2024-05-15 10:00" pubdate>
+          2024年5月15日 上午
         </time>
       </span>
     
@@ -225,7 +225,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          0 字
+          397 字
         
       </span>
     
@@ -237,7 +237,7 @@
         
         
           <!-- compatible with older versions-->
-          1 分钟
+          4 分钟
         
       </span>
     
@@ -274,13 +274,13 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">浏览一个网页会泄露什么信息</h1>
+            <h1 id="seo-header">btrfs关于raid1的问题处理</h1>
             
               <p id="updated-time" class="note note-info" style="">
                 
                   
                     <!-- compatible with older versions-->
-                    本文最后更新于：2024年2月22日 下午
+                    本文最后更新于：2024年5月15日 上午
                   
                 
               </p>
@@ -288,7 +288,20 @@
             
               <div class="markdown-body">
                 
-                <p><img src="/img/article/%E5%8C%97%E4%BA%AC%E7%8E%AF%E7%90%83%E5%BD%B1%E8%A7%86%E5%9F%8E%E6%B8%B8%E8%AE%B0/%E5%90%88%E7%85%A73.JPEG" srcset="/img/loading.gif" lazyload alt="门口合照2"></p>
+                <h1 id="raid1-似乎并没有生效"><a href="#raid1-似乎并没有生效" class="headerlink" title="raid1 似乎并没有生效"></a>raid1 似乎并没有生效</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">❯ sudo btrfs filesystem show<br>Label: <span class="hljs-string">&#x27;worisur&#x27;</span>  uuid: 586d7748-8b6f-47e4-b863-9821ec10c325<br>        Total devices 2 FS bytes used 811.10GiB<br>        devid    1 size 1.82TiB used 411.02GiB path /dev/nvme1n1p2<br>        devid    2 size 1.82TiB used 412.01GiB path /dev/nvme2n1p2<br><span class="hljs-comment"># 两块盘似乎是以raid 0 的方式存储本地数据的。</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">❯ sudo btrfs filesystem <span class="hljs-built_in">df</span> ./<br>Data, single: total=819.01GiB, used=810.06GiB    <span class="hljs-comment">#数据果然仅仅存了一份，而且是以raid 0 的方式存放的</span><br>System, RAID1: total=8.00MiB, used=112.00KiB<br>Metadata, RAID1: total=2.00GiB, used=1.03GiB<br>GlobalReserve, single: total=512.00MiB, used=0.00B<br><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs bash">❯ sudo btrfs filesystem usage ./<br>Overall:<br>    Device size:                   3.64TiB<br>    Device allocated:            823.02GiB<br>    Device unallocated:            2.83TiB<br>    Device missing:                  0.00B<br>    Device slack:                    0.00B<br>    Used:                        812.13GiB<br>    Free (estimated):              2.84TiB      (min: 1.42TiB)<br>    Free (statfs, <span class="hljs-built_in">df</span>):             2.84TiB<br>    Data ratio:                       1.00<br>    Metadata ratio:                   2.00<br>    Global reserve:              512.00MiB      (used: 0.00B)<br>    Multiple profiles:                  no<br><br>Data,single: Size:819.01GiB, Used:810.07GiB (98.91%)  <span class="hljs-comment">#数据果然仅仅存了一份，而且是以raid 0 的方式存放的</span><br>   /dev/nvme1n1p2        409.01GiB<br>   /dev/nvme2n1p2        410.00GiB<br><br>Metadata,RAID1: Size:2.00GiB, Used:1.03GiB (51.51%)<br>   /dev/nvme1n1p2          2.00GiB<br>   /dev/nvme2n1p2          2.00GiB<br><br>System,RAID1: Size:8.00MiB, Used:112.00KiB (1.37%)<br>   /dev/nvme1n1p2          8.00MiB<br>   /dev/nvme2n1p2          8.00MiB<br><br>Unallocated:<br>   /dev/nvme1n1p2          1.42TiB<br>   /dev/nvme2n1p2          1.42TiB<br></code></pre></td></tr></table></figure>
+
+<h1 id="问题处理"><a href="#问题处理" class="headerlink" title="问题处理"></a>问题处理</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">btrfs balance start -dconvert=raid1,soft /<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs bash">❯ sudo btrfs filesystem usage ./<br>Overall:<br>    Device size:                   3.64TiB<br>    Device allocated:              1.59TiB<br>    Device unallocated:            2.04TiB<br>    Device missing:                  0.00B<br>    Device slack:                    0.00B<br>    Used:                          1.58TiB<br>    Free (estimated):              1.02TiB      (min: 1.02TiB)<br>    Free (statfs, <span class="hljs-built_in">df</span>):             1.02TiB<br>    Data ratio:                       2.00<br>    Metadata ratio:                   2.00<br>    Global reserve:              512.00MiB      (used: 0.00B)<br>    Multiple profiles:                  no<br><br>Data,RAID1: Size:813.00GiB, Used:810.04GiB (99.64%)<br>   /dev/nvme1n1p2        813.00GiB<br>   /dev/nvme2n1p2        813.00GiB<br><br>Metadata,RAID1: Size:2.00GiB, Used:1.04GiB (51.89%)<br>   /dev/nvme1n1p2          2.00GiB<br>   /dev/nvme2n1p2          2.00GiB<br><br>System,RAID1: Size:8.00MiB, Used:144.00KiB (1.76%)<br>   /dev/nvme1n1p2          8.00MiB<br>   /dev/nvme2n1p2          8.00MiB<br><br>Unallocated:<br>   /dev/nvme1n1p2          1.02TiB<br>   /dev/nvme2n1p2          1.02TiB<br><br>lux@Worisur /home/3.os/0.btrfs                                                                                 17:36:36<br>❯ sudo btrfs filesystem <span class="hljs-built_in">df</span> ./<br>Data, RAID1: total=813.00GiB, used=810.04GiB<br>System, RAID1: total=8.00MiB, used=144.00KiB<br>Metadata, RAID1: total=2.00GiB, used=1.04GiB<br>GlobalReserve, single: total=512.00MiB, used=0.00B<br><br>lux@Worisur /home/3.os/0.btrfs                                                                                 17:37:16<br>❯ sudo btrfs filesystem show ./<br>Label: <span class="hljs-string">&#x27;worisur&#x27;</span>  uuid: 586d7748-8b6f-47e4-b863-9821ec10c325<br>        Total devices 2 FS bytes used 811.08GiB<br>        devid    1 size 1.82TiB used 815.01GiB path /dev/nvme1n1p2<br>        devid    2 size 1.82TiB used 815.01GiB path /dev/nvme2n1p2<br><br></code></pre></td></tr></table></figure>
+
+
+<h1 id="other"><a href="#other" class="headerlink" title="other"></a>other</h1><p>如果任意一块盘坏了，做如下操作，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">btrfs replace start 1 /dev/sdb2 /mnt  <span class="hljs-comment">#此处的1 2 为 btrfs filesystem show 看到的磁盘号</span><br></code></pre></td></tr></table></figure>
+
 
                 
               </div>
@@ -307,7 +320,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/Security/" class="category-chain-item">Security</a>
+  <a href="/categories/btrfs/" class="category-chain-item">btrfs</a>
   
   
 
@@ -322,7 +335,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Security/" class="print-no-link">#Security</a>
+        <a href="/tags/btrfs/" class="print-no-link">#btrfs</a>
       
     </div>
   
@@ -334,8 +347,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>浏览一个网页会泄露什么信息</div>
-      <div>https://worisur.github.io/2024/02/22/2024-02-22.浏览一个网页会泄露什么信息/</div>
+      <div>btrfs关于raid1的问题处理</div>
+      <div>https://worisur.github.io/2024/05/15/2024-05-15.btrfs配置raid1/</div>
     </div>
     <div class="license-meta">
       
@@ -347,7 +360,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年2月22日</div>
+          <div>2024年5月15日</div>
         </div>
       
       
@@ -374,6 +387,23 @@
 
 
 
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/03/18/2024-03-18.%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E6%8C%87%E4%BB%A4%E5%92%8C%E8%BF%90%E7%AE%97/" title="计算机组成原理-指令和运算">
+                        <span class="hidden-mobile">计算机组成原理-指令和运算</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
               
             </div>
 
