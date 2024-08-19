@@ -19,13 +19,13 @@
   <meta name="author" content="worisur">
   <meta name="keywords" content="">
   
-    <meta name="description" content="文件系统、raid1 ……">
+    <meta name="description" content="gnome、nvidia、linux">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>btrfs关于raid1的问题处理 - worisur&#39;s blog</title>
+  <title>Gnome使用nvidia闭源驱动启用wayland - worisur&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -202,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="btrfs关于raid1的问题处理"></span>
+            <span id="subtitle" data-typed-text="Gnome使用nvidia闭源驱动启用wayland"></span>
           
         </div>
 
@@ -213,8 +213,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-05-15 10:00" pubdate>
-          2024年5月15日 上午
+        <time datetime="2024-08-18 08:30" pubdate>
+          2024年8月18日 早上
         </time>
       </span>
     
@@ -226,7 +226,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          397 字
+          363 字
         
       </span>
     
@@ -275,13 +275,13 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">btrfs关于raid1的问题处理</h1>
+            <h1 id="seo-header">Gnome使用nvidia闭源驱动启用wayland</h1>
             
               <p id="updated-time" class="note note-info" style="">
                 
                   
                     <!-- compatible with older versions-->
-                    本文最后更新于：2024年5月15日 上午
+                    本文最后更新于：2024年8月18日 上午
                   
                 
               </p>
@@ -289,19 +289,27 @@
             
               <div class="markdown-body">
                 
-                <h1 id="raid1-似乎并没有生效"><a href="#raid1-似乎并没有生效" class="headerlink" title="raid1 似乎并没有生效"></a>raid1 似乎并没有生效</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">❯ <span class="hljs-built_in">sudo</span> btrfs filesystem show<br>Label: <span class="hljs-string">&#x27;worisur&#x27;</span>  uuid: 586d7748-8b6f-47e4-b863-9821ec10c325<br>        Total devices 2 FS bytes used 811.10GiB<br>        devid    1 size 1.82TiB used 411.02GiB path /dev/nvme1n1p2<br>        devid    2 size 1.82TiB used 412.01GiB path /dev/nvme2n1p2<br><span class="hljs-comment"># 两块盘似乎是以raid 0 的方式存储本地数据的。</span><br></code></pre></td></tr></table></figure>
+                <h1 id="1-具体情况"><a href="#1-具体情况" class="headerlink" title="1 具体情况"></a>1 具体情况</h1><p>偶然的情况下发现 archlinux gnome 的窗口系统是 X11 而不是我配置文件中的 Wayland。  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">GDM (GNOME Display Manager) will automatically use Wayland when supported, except when using the proprietary NVIDIA driver, <span class="hljs-keyword">in</span> <span class="hljs-built_in">which</span> <span class="hljs-keyword">case</span> it will fall back to X11 due to instability. <br><br>GDM确实是默认支持Wayland的，但是如果使用NVIDIA的专有驱动，它就会变回X11。所以登录界面右下角的齿轮里只有使用X11的GNOME和GNOME Classic。<br></code></pre></td></tr></table></figure>
 
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">❯ <span class="hljs-built_in">sudo</span> btrfs filesystem <span class="hljs-built_in">df</span> ./<br>Data, single: total=819.01GiB, used=810.06GiB    <span class="hljs-comment">#数据果然仅仅存了一份，而且是以raid 0 的方式存放的</span><br>System, RAID1: total=8.00MiB, used=112.00KiB<br>Metadata, RAID1: total=2.00GiB, used=1.03GiB<br>GlobalReserve, single: total=512.00MiB, used=0.00B<br><br></code></pre></td></tr></table></figure>
+<p>如果需要在安装NVIDIA专有驱动后为GDM启用Wayland，需要如此操作：</p>
+<h1 id="2-设置DRM内核模式"><a href="#2-设置DRM内核模式" class="headerlink" title="2 设置DRM内核模式"></a>2 设置DRM内核模式</h1><blockquote>
+<p>参考资料：<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/title/NVIDIA#DRM_kernel_mode_setting">https://wiki.archlinux.org/title/NVIDIA#DRM_kernel_mode_setting</a></p>
+</blockquote>
+<p>具体操作如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">在终端中执行以下命令以检查nvidia_drm的状态<br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">cat</span> /sys/module/nvidia_drm/parameters/modeset<br>如果输出的是Y，则不需要进行此操作。如果是N，则需要在引导工具中加入nvidia_drm.modeset=1 参数。<br>我是用 refind 具体如下：<br>options  <span class="hljs-string">&quot;root=UUID=586d7748-8b6f-47e4-b863-9821ec10c325 rw add_efi_memmap rootflags=subvol=@Aos quiet splash amd_iommu=on iommu=pt nvidia-drm.modeset=1&quot;</span><br></code></pre></td></tr></table></figure>
 
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs bash">❯ <span class="hljs-built_in">sudo</span> btrfs filesystem usage ./<br>Overall:<br>    Device size:                   3.64TiB<br>    Device allocated:            823.02GiB<br>    Device unallocated:            2.83TiB<br>    Device missing:                  0.00B<br>    Device slack:                    0.00B<br>    Used:                        812.13GiB<br>    Free (estimated):              2.84TiB      (min: 1.42TiB)<br>    Free (statfs, <span class="hljs-built_in">df</span>):             2.84TiB<br>    Data ratio:                       1.00<br>    Metadata ratio:                   2.00<br>    Global reserve:              512.00MiB      (used: 0.00B)<br>    Multiple profiles:                  no<br><br>Data,single: Size:819.01GiB, Used:810.07GiB (98.91%)  <span class="hljs-comment">#数据果然仅仅存了一份，而且是以raid 0 的方式存放的</span><br>   /dev/nvme1n1p2        409.01GiB<br>   /dev/nvme2n1p2        410.00GiB<br><br>Metadata,RAID1: Size:2.00GiB, Used:1.03GiB (51.51%)<br>   /dev/nvme1n1p2          2.00GiB<br>   /dev/nvme2n1p2          2.00GiB<br><br>System,RAID1: Size:8.00MiB, Used:112.00KiB (1.37%)<br>   /dev/nvme1n1p2          8.00MiB<br>   /dev/nvme2n1p2          8.00MiB<br><br>Unallocated:<br>   /dev/nvme1n1p2          1.42TiB<br>   /dev/nvme2n1p2          1.42TiB<br></code></pre></td></tr></table></figure>
+<p>重启电脑，检查nvidia_drm的状态，如果输出为Y则可以进行下一步操作。</p>
+<h1 id="3-禁用规则"><a href="#3-禁用规则" class="headerlink" title="3 禁用规则"></a>3 禁用规则</h1><blockquote>
+<p>参考资料：<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/title/GDM#Wayland_and_the_proprietary_NVIDIA_driver">https://wiki.archlinux.org/title/GDM#Wayland_and_the_proprietary_NVIDIA_driver</a></p>
+</blockquote>
+<p>你需要执行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">ln</span> -s /dev/null /etc/udev/rules.d/61-gdm.rules<br>这个命令会创建一个规则以覆盖 /usr/lib/udev/rules.d/ 里的GDM的一项规则，这个规则会在检测到NVIDIA专有驱动的时候停用GDM的Wayland。<br><br>我的做法是注释了整个 /usr/lib/udev/rules.d/61-gdm.rules 文件。<br></code></pre></td></tr></table></figure>
+<p>完成之后，重启，问题应该已经解决。</p>
+<h1 id="4-验证"><a href="#4-验证" class="headerlink" title="4 验证"></a>4 验证</h1><p>打开终端，执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-variable">$XDG_SESSION_TYPE</span><br>wayland<br></code></pre></td></tr></table></figure>
 
-<h1 id="问题处理"><a href="#问题处理" class="headerlink" title="问题处理"></a>问题处理</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">btrfs balance start -dconvert=raid1,soft /<br></code></pre></td></tr></table></figure>
 
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs bash">❯ <span class="hljs-built_in">sudo</span> btrfs filesystem usage ./<br>Overall:<br>    Device size:                   3.64TiB<br>    Device allocated:              1.59TiB<br>    Device unallocated:            2.04TiB<br>    Device missing:                  0.00B<br>    Device slack:                    0.00B<br>    Used:                          1.58TiB<br>    Free (estimated):              1.02TiB      (min: 1.02TiB)<br>    Free (statfs, <span class="hljs-built_in">df</span>):             1.02TiB<br>    Data ratio:                       2.00<br>    Metadata ratio:                   2.00<br>    Global reserve:              512.00MiB      (used: 0.00B)<br>    Multiple profiles:                  no<br><br>Data,RAID1: Size:813.00GiB, Used:810.04GiB (99.64%)<br>   /dev/nvme1n1p2        813.00GiB<br>   /dev/nvme2n1p2        813.00GiB<br><br>Metadata,RAID1: Size:2.00GiB, Used:1.04GiB (51.89%)<br>   /dev/nvme1n1p2          2.00GiB<br>   /dev/nvme2n1p2          2.00GiB<br><br>System,RAID1: Size:8.00MiB, Used:144.00KiB (1.76%)<br>   /dev/nvme1n1p2          8.00MiB<br>   /dev/nvme2n1p2          8.00MiB<br><br>Unallocated:<br>   /dev/nvme1n1p2          1.02TiB<br>   /dev/nvme2n1p2          1.02TiB<br><br>lux@Worisur /home/3.os/0.btrfs                                                                                 17:36:36<br>❯ <span class="hljs-built_in">sudo</span> btrfs filesystem <span class="hljs-built_in">df</span> ./<br>Data, RAID1: total=813.00GiB, used=810.04GiB<br>System, RAID1: total=8.00MiB, used=144.00KiB<br>Metadata, RAID1: total=2.00GiB, used=1.04GiB<br>GlobalReserve, single: total=512.00MiB, used=0.00B<br><br>lux@Worisur /home/3.os/0.btrfs                                                                                 17:37:16<br>❯ <span class="hljs-built_in">sudo</span> btrfs filesystem show ./<br>Label: <span class="hljs-string">&#x27;worisur&#x27;</span>  uuid: 586d7748-8b6f-47e4-b863-9821ec10c325<br>        Total devices 2 FS bytes used 811.08GiB<br>        devid    1 size 1.82TiB used 815.01GiB path /dev/nvme1n1p2<br>        devid    2 size 1.82TiB used 815.01GiB path /dev/nvme2n1p2<br><br></code></pre></td></tr></table></figure>
-
-
-<h1 id="other"><a href="#other" class="headerlink" title="other"></a>other</h1><p>如果任意一块盘坏了，做如下操作，</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">btrfs replace start 1 /dev/sdb2 /mnt  <span class="hljs-comment">#此处的1 2 为 btrfs filesystem show 看到的磁盘号</span><br></code></pre></td></tr></table></figure>
 
 
                 
@@ -321,7 +329,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/btrfs/" class="category-chain-item">btrfs</a>
+  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
   
   
 
@@ -336,7 +344,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/btrfs/" class="print-no-link">#btrfs</a>
+        <a href="/tags/Linux/" class="print-no-link">#Linux</a>
       
     </div>
   
@@ -348,8 +356,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>btrfs关于raid1的问题处理</div>
-      <div>https://worisur.github.io/2024/05/15/2024-05-15.btrfs配置raid1/</div>
+      <div>Gnome使用nvidia闭源驱动启用wayland</div>
+      <div>https://worisur.github.io/2024/08/18/2024-08-18.Gnome使用nvidia闭源驱动启用wayland/</div>
     </div>
     <div class="license-meta">
       
@@ -361,7 +369,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年5月15日</div>
+          <div>2024年8月18日</div>
         </div>
       
       
@@ -393,18 +401,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/08/18/2024-08-18.Gnome%E4%BD%BF%E7%94%A8nvidia%E9%97%AD%E6%BA%90%E9%A9%B1%E5%8A%A8%E5%90%AF%E7%94%A8wayland/" title="Gnome使用nvidia闭源驱动启用wayland">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Gnome使用nvidia闭源驱动启用wayland</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/03/18/2024-03-18.%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E6%8C%87%E4%BB%A4%E5%92%8C%E8%BF%90%E7%AE%97/" title="计算机组成原理-指令和运算">
-                        <span class="hidden-mobile">计算机组成原理-指令和运算</span>
+                      <a href="/2024/05/15/2024-05-15.btrfs%E9%85%8D%E7%BD%AEraid1/" title="btrfs关于raid1的问题处理">
+                        <span class="hidden-mobile">btrfs关于raid1的问题处理</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
