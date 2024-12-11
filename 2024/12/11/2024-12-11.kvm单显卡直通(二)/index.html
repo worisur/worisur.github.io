@@ -226,7 +226,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          667 字
+          659 字
         
       </span>
     
@@ -302,7 +302,7 @@
 
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">chmod</span> +x /etc/libvirt/hooks/qemu<br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">chmod</span> +x /etc/libvirt/hooks/qemu.d/虚拟机名称/prepare/begin/start.sh<br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">chmod</span> +x /etc/libvirt/hooks/qemu.d/虚拟机名称/release/end/stop.sh<br></code></pre></td></tr></table></figure>
 
-<h1 id="目前存在问题"><a href="#目前存在问题" class="headerlink" title="目前存在问题"></a>目前存在问题</h1><p>虚拟机可以正常启动并且使用，但是关机脚本不起作用，linux图形化界面并无法恢复，造成黑屏，且linux无法ssh连接，问题带解决……</p>
+<h1 id="4-问题解决"><a href="#4-问题解决" class="headerlink" title="4 问题解决"></a>4 问题解决</h1><h2 id="4-1-启用-vfio-后主机无法启动并卡在黑屏，且系统无响应"><a href="#4-1-启用-vfio-后主机无法启动并卡在黑屏，且系统无响应" class="headerlink" title="4.1 启用 vfio 后主机无法启动并卡在黑屏，且系统无响应"></a>4.1 启用 vfio 后主机无法启动并卡在黑屏，且系统无响应</h2><p>内核启动时添加 video&#x3D;efifb:off 内核参数即可解决该问题。</p>
 
                 
               </div>
