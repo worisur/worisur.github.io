@@ -19,13 +19,13 @@
   <meta name="author" content="worisur">
   <meta name="keywords" content="">
   
-    <meta name="description" content="gnome、nvidia、linux">
+    <meta name="description" content="文件系统、raid1 ……">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Gnome使用nvidia闭源驱动启用wayland - worisur&#39;s blog</title>
+  <title>btrfs空间占用问题解决 - worisur&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -202,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Gnome使用nvidia闭源驱动启用wayland"></span>
+            <span id="subtitle" data-typed-text="btrfs空间占用问题解决"></span>
           
         </div>
 
@@ -213,8 +213,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-08-18 08:30" pubdate>
-          2024年8月18日 早上
+        <time datetime="2024-12-11 16:44" pubdate>
+          2024年12月11日 下午
         </time>
       </span>
     
@@ -226,7 +226,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          363 字
+          210 字
         
       </span>
     
@@ -238,7 +238,7 @@
         
         
           <!-- compatible with older versions-->
-          4 分钟
+          2 分钟
         
       </span>
     
@@ -275,13 +275,13 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Gnome使用nvidia闭源驱动启用wayland</h1>
+            <h1 id="seo-header">btrfs空间占用问题解决</h1>
             
               <p id="updated-time" class="note note-info" style="">
                 
                   
                     <!-- compatible with older versions-->
-                    本文最后更新于：2024年8月18日 上午
+                    本文最后更新于：2024年12月11日 下午
                   
                 
               </p>
@@ -289,27 +289,17 @@
             
               <div class="markdown-body">
                 
-                <h1 id="1-具体情况"><a href="#1-具体情况" class="headerlink" title="1 具体情况"></a>1 具体情况</h1><p>偶然的情况下发现 archlinux gnome 的窗口系统是 X11 而不是我配置文件中的 Wayland。  </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">GDM (GNOME Display Manager) will automatically use Wayland when supported, except when using the proprietary NVIDIA driver, <span class="hljs-keyword">in</span> <span class="hljs-built_in">which</span> <span class="hljs-keyword">case</span> it will fall back to X11 due to instability. <br><br>GDM确实是默认支持Wayland的，但是如果使用NVIDIA的专有驱动，它就会变回X11。所以登录界面右下角的齿轮里只有使用X11的GNOME和GNOME Classic。<br></code></pre></td></tr></table></figure>
+                <h1 id="1-问题"><a href="#1-问题" class="headerlink" title="1 问题"></a>1 问题</h1><p>文件系统显示使用1.4T容量，实际使用1T左右</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> btrfs filesystem usage ./<br>Overall:<br>        Device size:                                         3.64TiB<br>        Deviceiallocated:                                3.47TiB<br>        Device unallocated:                            168.00GiB<br>        Device missing:                                   0.00B<br>        Device slack:                                       0.00B<br>        Used:                                                   2.82TiB<br>        Free (estimated):                                 412.29GiB           (min: 412.29GiB)<br>        Free (statfs,<span class="hljs-built_in">df</span>):                                    412.29GiB<br>        Data ratio:                                           2.00<br>        Metadata ratio:                                   2.00<br>        Global reserve:                                    512.00MiB          (used: 0.00B)<br>        Multiple profiles:                                 no<br>Data ,RAID1: Size: 1.73TiB, Used: 1.41TiB (81.47%)<br>        /dev/nvme1n1p2                                1.73TiB<br>        /dev/nvme2n1p2                                1.73TiB<br>Metadata RAID1: size: 6.00GiB, Used: 2.01GiB (33.52%)<br>        /dev/nvme1n1p2                                6.00GiB<br>        /dev/nvme2n1p2                                6.00GiB<br><br><span class="hljs-built_in">sudo</span> btrfs filesystem <span class="hljs-built_in">df</span> ./<br>Data, RAID1:  total =1.73TiB used=1.41TiB<br>System, RAID1: total=8.00MiB, used=368.00KiB<br>Metadata, RAID1: total=6.00GiB, used=2.01GiB<br>GlobalReserve, single: total=512.00MiB, used=0.00B<br></code></pre></td></tr></table></figure>
 
-<p>如果需要在安装NVIDIA专有驱动后为GDM启用Wayland，需要如此操作：</p>
-<h1 id="2-设置DRM内核模式"><a href="#2-设置DRM内核模式" class="headerlink" title="2 设置DRM内核模式"></a>2 设置DRM内核模式</h1><blockquote>
-<p>参考资料：<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/title/NVIDIA#DRM_kernel_mode_setting">https://wiki.archlinux.org/title/NVIDIA#DRM_kernel_mode_setting</a></p>
-</blockquote>
-<p>具体操作如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">在终端中执行以下命令以检查nvidia_drm的状态<br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">cat</span> /sys/module/nvidia_drm/parameters/modeset<br>如果输出的是Y，则不需要进行此操作。如果是N，则需要在引导工具中加入nvidia_drm.modeset=1 参数。<br>我是用 refind 具体如下：<br>options  <span class="hljs-string">&quot;root=UUID=586d7748-8b6f-47e4-b863-9821ec10c325 rw add_efi_memmap rootflags=subvol=@Aos quiet splash amd_iommu=on iommu=pt nvidia-drm.modeset=1&quot;</span><br></code></pre></td></tr></table></figure>
+<p>实际存储容量：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">du</span> -shx /<br>187G           /<br><br><span class="hljs-built_in">sudo</span> du-shx /home/<br>118G           /home/<br><br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">du</span> -shx /home/1.worisur<br>583G           /home/1.worisur<br><br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">du</span> -shx /home/2.<span class="hljs-built_in">users</span><br>118G           /home/2.<span class="hljs-built_in">users</span><br></code></pre></td></tr></table></figure>
 
-<p>重启电脑，检查nvidia_drm的状态，如果输出为Y则可以进行下一步操作。</p>
-<h1 id="3-禁用规则"><a href="#3-禁用规则" class="headerlink" title="3 禁用规则"></a>3 禁用规则</h1><blockquote>
-<p>参考资料：<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/title/GDM#Wayland_and_the_proprietary_NVIDIA_driver">https://wiki.archlinux.org/title/GDM#Wayland_and_the_proprietary_NVIDIA_driver</a></p>
-</blockquote>
-<p>你需要执行以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">ln</span> -s /dev/null /etc/udev/rules.d/61-gdm.rules<br>这个命令会创建一个规则以覆盖 /usr/lib/udev/rules.d/ 里的GDM的一项规则，这个规则会在检测到NVIDIA专有驱动的时候停用GDM的Wayland。<br><br>我的做法是注释了整个 /usr/lib/udev/rules.d/61-gdm.rules 文件。<br></code></pre></td></tr></table></figure>
-<p>完成之后，重启，问题应该已经解决。</p>
-<h1 id="4-验证"><a href="#4-验证" class="headerlink" title="4 验证"></a>4 验证</h1><p>打开终端，执行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-variable">$XDG_SESSION_TYPE</span><br>wayland<br></code></pre></td></tr></table></figure>
+<h1 id="2-问题解决"><a href="#2-问题解决" class="headerlink" title="2 问题解决"></a>2 问题解决</h1><p>可能是文件碎片导致的，尝试碎片整理，问题解决：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> btrfs filesystem defragment -r /home/1.worisur<br></code></pre></td></tr></table></figure>
 
-
+<p>磁盘容量使用情况缩小，但是多了Unallocated部分，网上说这部发后续会自动使用。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> btrfs filesystem usage ./<br>...<br>Unallocated:<br>/dev/nvme1n1p2          384.78GiB<br>/dev/nvme2n1p2          384.78GiB<br></code></pre></td></tr></table></figure>
 
 
                 
@@ -329,7 +319,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  <a href="/categories/btrfs/" class="category-chain-item">btrfs</a>
   
   
 
@@ -344,7 +334,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Linux/" class="print-no-link">#Linux</a>
+        <a href="/tags/btrfs/" class="print-no-link">#btrfs</a>
       
     </div>
   
@@ -356,8 +346,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Gnome使用nvidia闭源驱动启用wayland</div>
-      <div>https://worisur.github.io/2024/08/18/2024-08-18.Gnome使用nvidia闭源驱动启用wayland/</div>
+      <div>btrfs空间占用问题解决</div>
+      <div>https://worisur.github.io/2024/12/11/2024-12-11.btrfs空间占用问题解决/</div>
     </div>
     <div class="license-meta">
       
@@ -369,7 +359,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年8月18日</div>
+          <div>2024年12月11日</div>
         </div>
       
       
@@ -401,18 +391,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/12/11/2024-12-11.kvm%E6%A0%B8%E6%98%BE%E7%9B%B4%E9%80%9A/" title="kvm核显直通">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">kvm核显直通</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/05/15/2024-05-15.btrfs%E9%85%8D%E7%BD%AEraid1/" title="btrfs关于raid1的问题处理">
-                        <span class="hidden-mobile">btrfs关于raid1的问题处理</span>
+                      <a href="/2024/12/11/2024-12-11.kvm%E5%8D%95%E6%98%BE%E5%8D%A1%E7%9B%B4%E9%80%9A(%E4%BA%8C)/" title="kvm单显卡直通（二）">
+                        <span class="hidden-mobile">kvm单显卡直通（二）</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
