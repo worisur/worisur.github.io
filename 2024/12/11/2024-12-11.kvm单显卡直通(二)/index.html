@@ -19,13 +19,13 @@
   <meta name="author" content="worisur">
   <meta name="keywords" content="">
   
-    <meta name="description" content="gnome、nvidia、linux">
+    <meta name="description" content="kvm、nvidia、linux">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Gnome使用nvidia闭源驱动启用wayland - worisur&#39;s blog</title>
+  <title>kvm单显卡直通（二） - worisur&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -202,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Gnome使用nvidia闭源驱动启用wayland"></span>
+            <span id="subtitle" data-typed-text="kvm单显卡直通（二）"></span>
           
         </div>
 
@@ -213,8 +213,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-08-18 08:30" pubdate>
-          2024年8月18日 早上
+        <time datetime="2024-12-11 16:41" pubdate>
+          2024年12月11日 下午
         </time>
       </span>
     
@@ -226,7 +226,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          363 字
+          426 字
         
       </span>
     
@@ -275,42 +275,34 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Gnome使用nvidia闭源驱动启用wayland</h1>
-            
-              <p id="updated-time" class="note note-info" style="">
-                
-                  
-                    <!-- compatible with older versions-->
-                    本文最后更新于：2024年8月18日 上午
-                  
-                
-              </p>
+            <h1 id="seo-header">kvm单显卡直通（二）</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="1-具体情况"><a href="#1-具体情况" class="headerlink" title="1 具体情况"></a>1 具体情况</h1><p>偶然的情况下发现 archlinux gnome 的窗口系统是 X11 而不是我配置文件中的 Wayland。  </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">GDM (GNOME Display Manager) will automatically use Wayland when supported, except when using the proprietary NVIDIA driver, <span class="hljs-keyword">in</span> <span class="hljs-built_in">which</span> <span class="hljs-keyword">case</span> it will fall back to X11 due to instability. <br><br>GDM确实是默认支持Wayland的，但是如果使用NVIDIA的专有驱动，它就会变回X11。所以登录界面右下角的齿轮里只有使用X11的GNOME和GNOME Classic。<br></code></pre></td></tr></table></figure>
-
-<p>如果需要在安装NVIDIA专有驱动后为GDM启用Wayland，需要如此操作：</p>
-<h1 id="2-设置DRM内核模式"><a href="#2-设置DRM内核模式" class="headerlink" title="2 设置DRM内核模式"></a>2 设置DRM内核模式</h1><blockquote>
-<p>参考资料：<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/title/NVIDIA#DRM_kernel_mode_setting">https://wiki.archlinux.org/title/NVIDIA#DRM_kernel_mode_setting</a></p>
+                <blockquote>
+<p>Tip: <a target="_blank" rel="noopener" href="https://worisur.gitlab.io/2022/07/14/2022-07-14.kvm%E6%98%BE%E5%8D%A1%E7%9B%B4%E9%80%9A/">单显卡直通请参考这一篇</a><br>Tip: <a href="">核显直通请参考这一篇</a></p>
 </blockquote>
-<p>具体操作如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">在终端中执行以下命令以检查nvidia_drm的状态<br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">cat</span> /sys/module/nvidia_drm/parameters/modeset<br>如果输出的是Y，则不需要进行此操作。如果是N，则需要在引导工具中加入nvidia_drm.modeset=1 参数。<br>我是用 refind 具体如下：<br>options  <span class="hljs-string">&quot;root=UUID=586d7748-8b6f-47e4-b863-9821ec10c325 rw add_efi_memmap rootflags=subvol=@Aos quiet splash amd_iommu=on iommu=pt nvidia-drm.modeset=1&quot;</span><br></code></pre></td></tr></table></figure>
+<h1 id="1-系统配置"><a href="#1-系统配置" class="headerlink" title="1 系统配置"></a>1 系统配置</h1><p>系统配置如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs bash">❯ neofetch<br>                   -`                    lux@Worisur<br>                  .o+`                   -----------<br>                 `ooo/                   OS: Arch Linux x86_64<br>                `+oooo:                  Kernel: 6.12.4-arch1-1<br>               `+oooooo:                 Uptime: 13 hours, 21 mins<br>               -+oooooo+:                Packages: 1065 (pacman)<br>             `/:-:++oooo+:               Shell: zsh 5.9<br>            `/++++/+++++++:              Resolution: 3840x2160<br>           `/++++++++++++++:             Terminal: /dev/pts/1<br>          `/+++ooooooooooooo/`           CPU: AMD Ryzen 9 7950X (32) @ 5.881GHz<br>         ./ooosssso++osssssso+`          GPU: AMD ATI 6c:00.0 Raphael<br>        .oossssso-````/ossssss+`         GPU: NVIDIA GeForce RTX 4060<br>       -osssssso.      :ssssssso.        GPU: NVIDIA GeForce RTX 4080 SUPER<br>      :osssssss/        osssso+++.       Memory: 39318MiB / 63436MiB<br>     /ossssssss/        +ssssooo/-<br>   `/ossssso+/:-        -:/+osssso+-<br>  `+sso+:-`                 `.-/+oso:<br> `++:.                           `-/+/<br> .`                                 `/<br></code></pre></td></tr></table></figure>
 
-<p>重启电脑，检查nvidia_drm的状态，如果输出为Y则可以进行下一步操作。</p>
-<h1 id="3-禁用规则"><a href="#3-禁用规则" class="headerlink" title="3 禁用规则"></a>3 禁用规则</h1><blockquote>
-<p>参考资料：<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/title/GDM#Wayland_and_the_proprietary_NVIDIA_driver">https://wiki.archlinux.org/title/GDM#Wayland_and_the_proprietary_NVIDIA_driver</a></p>
-</blockquote>
-<p>你需要执行以下命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">ln</span> -s /dev/null /etc/udev/rules.d/61-gdm.rules<br>这个命令会创建一个规则以覆盖 /usr/lib/udev/rules.d/ 里的GDM的一项规则，这个规则会在检测到NVIDIA专有驱动的时候停用GDM的Wayland。<br><br>我的做法是注释了整个 /usr/lib/udev/rules.d/61-gdm.rules 文件。<br></code></pre></td></tr></table></figure>
-<p>完成之后，重启，问题应该已经解决。</p>
-<h1 id="4-验证"><a href="#4-验证" class="headerlink" title="4 验证"></a>4 验证</h1><p>打开终端，执行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-variable">$XDG_SESSION_TYPE</span><br>wayland<br></code></pre></td></tr></table></figure>
+<h1 id="2-iGPU-相关配置"><a href="#2-iGPU-相关配置" class="headerlink" title="2 iGPU 相关配置"></a>2 iGPU 相关配置</h1><p>iGPU 及其配套音频设备已绑定到 vfio-pci，并配置&#x2F;etc&#x2F;modprobe.d :</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">❯ <span class="hljs-built_in">cat</span> blacklist.conf<br>blacklist amdgpu<br><br>❯ <span class="hljs-built_in">cat</span> iommu_unsafe_interrupts.conf <br>options vfio_iommu_type1 allow_unsafe_interrupts=1<br><br>❯ <span class="hljs-built_in">cat</span> vfio.conf                   <br>options vfio-pci ids=10de:2882, 10de:22be, 1002:164e, 1002:1640 <br>options vfio-pci disable_idle_d3=1<br><span class="hljs-comment"># options vfio-pci disable_vga=1</span><br><span class="hljs-comment"># softdep radeon pre: vfio-pci</span><br><span class="hljs-comment"># softdep amdgpu pre: vfio-pci</span><br></code></pre></td></tr></table></figure>
 
+<h1 id="3-虚拟机相关配置"><a href="#3-虚拟机相关配置" class="headerlink" title="3 虚拟机相关配置"></a>3 虚拟机相关配置</h1><p>删除以下内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># Remove USB Redirector 1 and USB Redirector 2</span><br><span class="hljs-comment"># Remove Sound ich9</span><br><span class="hljs-comment"># Remove Channel spice</span><br>&lt;graphics <span class="hljs-built_in">type</span>=<span class="hljs-string">&quot;spice&quot;</span> autoport=<span class="hljs-string">&quot;yes&quot;</span>&gt;<br>      &lt;listen <span class="hljs-built_in">type</span>=<span class="hljs-string">&quot;address&quot;</span>/&gt;<br>      &lt;image compression=<span class="hljs-string">&quot;off&quot;</span>/&gt;<br>&lt;/graphics&gt;<br>...<br>&lt;audio <span class="hljs-built_in">id</span>=<span class="hljs-string">&quot;1&quot;</span> <span class="hljs-built_in">type</span>=<span class="hljs-string">&quot;spice&quot;</span>/&gt;<br><br></code></pre></td></tr></table></figure>
 
+<p>去虚拟化</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs bash">&lt;os&gt;<br>  &lt;smbios mode=<span class="hljs-string">&#x27;host&#x27;</span>/&gt;<br>  ...<br>&lt;/os&gt;<br>...<br>&lt;features&gt;<br>  &lt;hyperv&gt;<br>    ...<br>    &lt;vendor_id state=<span class="hljs-string">&#x27;on&#x27;</span> value=<span class="hljs-string">&#x27;123456789ab&#x27;</span>/&gt;<br>  &lt;/hyperv&gt;<br>  &lt;kvm&gt;<br>    &lt;hidden state=<span class="hljs-string">&#x27;on&#x27;</span>/&gt;<br>    &lt;hint-dedicated state=<span class="hljs-string">&#x27;on&#x27;</span>/&gt;<br>  &lt;/kvm&gt;<br>  ...<br>&lt;/features&gt;<br>...<br>&lt;cpu mode=<span class="hljs-string">&#x27;host-passthrough&#x27;</span>&gt;<br>  ...<br>  &lt;feature policy=<span class="hljs-string">&#x27;disable&#x27;</span> name=<span class="hljs-string">&#x27;hypervisor&#x27;</span>/&gt;<br>&lt;/cpu&gt;<br></code></pre></td></tr></table></figure>
 
+<h1 id="4-部分问题处理"><a href="#4-部分问题处理" class="headerlink" title="4 部分问题处理"></a>4 部分问题处理</h1><h1 id="4-1-win11-绕过-tpm检测"><a href="#4-1-win11-绕过-tpm检测" class="headerlink" title="4.1 win11 绕过 tpm检测"></a>4.1 win11 绕过 tpm检测</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">REG ADD HKLM\SYSTEM\Setup\LabConfig /v BypassTPMCheck /t REG_DWORD /d 1<br>REG ADD HKLM\SYSTEM\Setup\LabConfig /v BypassSecureBootCheck /t REG_DWORD /d 1<br></code></pre></td></tr></table></figure>
+
+<h1 id="4-2-win-11-跳过联网检测"><a href="#4-2-win-11-跳过联网检测" class="headerlink" title="4.2 win 11 跳过联网检测"></a>4.2 win 11 跳过联网检测</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">OOBE\BYPASSNRO<br></code></pre></td></tr></table></figure>
+
+<h1 id="4-3-radeonresetbugfixservice-安装问题"><a href="#4-3-radeonresetbugfixservice-安装问题" class="headerlink" title="4.3 radeonresetbugfixservice 安装问题"></a>4.3 radeonresetbugfixservice 安装问题</h1><p>核显驱动安装完重启前需要安装radeonresetbugfixservice，否则重启后驱动会掉，核显报错code 43  </p>
+<p><a target="_blank" rel="noopener" href="https://github.com/inga-lovinde/RadeonResetBugFix">radeonresetbugfixservice下载地址</a>  </p>
+<p>1.以管理员身份运行cmd<br>2.安装windows服务<br>cd C:\Windows\Microsoft.NET\Framework\v4.0.30319(InstallUtil.exe的路径，注意InstallUtil.exe的版本号需要和项目的版本号相同)<br>3.安装windows服务<br>InstallUtil.exe D:\项目相关文件\MonitoringTEST\DialTest\bin\Debug\ProjectTest.exe(项目的路径)  </p>
+<p>卸载: installutil &#x2F;uninstall <yourproject>.exe  </p>
 
                 
               </div>
@@ -332,6 +324,13 @@
   <a href="/categories/Linux/" class="category-chain-item">Linux</a>
   
   
+    <span>></span>
+    
+  <a href="/categories/Linux/kvm/" class="category-chain-item">kvm</a>
+  
+  
+
+  
 
       </span>
     
@@ -346,6 +345,8 @@
       
         <a href="/tags/Linux/" class="print-no-link">#Linux</a>
       
+        <a href="/tags/kvm/" class="print-no-link">#kvm</a>
+      
     </div>
   
 </div>
@@ -356,8 +357,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Gnome使用nvidia闭源驱动启用wayland</div>
-      <div>https://worisur.github.io/2024/08/18/2024-08-18.Gnome使用nvidia闭源驱动启用wayland/</div>
+      <div>kvm单显卡直通（二）</div>
+      <div>https://worisur.github.io/2024/12/11/2024-12-11.kvm单显卡直通(二)/</div>
     </div>
     <div class="license-meta">
       
@@ -369,7 +370,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年8月18日</div>
+          <div>2024年12月11日</div>
         </div>
       
       
@@ -401,9 +402,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/12/11/2024-12-11.kvm%E6%A0%B8%E6%98%BE%E7%9B%B4%E9%80%9A/" title="kvm核显直通">
+                      <a href="/2024/12/11/2024-12-11.btrfs%E7%A9%BA%E9%97%B4%E5%8D%A0%E7%94%A8%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" title="btrfs空间占用问题解决">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">kvm核显直通</span>
+                        <span class="hidden-mobile">btrfs空间占用问题解决</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -411,8 +412,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/05/15/2024-05-15.btrfs%E9%85%8D%E7%BD%AEraid1/" title="btrfs关于raid1的问题处理">
-                        <span class="hidden-mobile">btrfs关于raid1的问题处理</span>
+                      <a href="/2024/12/11/2024-12-11.kvm%E6%A0%B8%E6%98%BE%E7%9B%B4%E9%80%9A/" title="kvm核显直通">
+                        <span class="hidden-mobile">kvm核显直通</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
