@@ -19,13 +19,13 @@
   <meta name="author" content="worisur">
   <meta name="keywords" content="">
   
-    <meta name="description" content="文件系统、raid1 ……">
+    <meta name="description" content="kvm、qcow2">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>btrfs空间占用问题解决 - worisur&#39;s blog</title>
+  <title>qcow2格式磁盘压缩(转载) - worisur&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -202,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="btrfs空间占用问题解决"></span>
+            <span id="subtitle" data-typed-text="qcow2格式磁盘压缩(转载)"></span>
           
         </div>
 
@@ -213,8 +213,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-12-11 16:44" pubdate>
-          2024年12月11日 下午
+        <time datetime="2025-01-18 11:19" pubdate>
+          2025年1月18日 上午
         </time>
       </span>
     
@@ -226,7 +226,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          210 字
+          614 字
         
       </span>
     
@@ -238,7 +238,7 @@
         
         
           <!-- compatible with older versions-->
-          2 分钟
+          6 分钟
         
       </span>
     
@@ -275,13 +275,13 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">btrfs空间占用问题解决</h1>
+            <h1 id="seo-header">qcow2格式磁盘压缩(转载)</h1>
             
               <p id="updated-time" class="note note-info" style="">
                 
                   
                     <!-- compatible with older versions-->
-                    本文最后更新于：2024年12月11日 下午
+                    本文最后更新于：2025年1月18日 中午
                   
                 
               </p>
@@ -289,18 +289,26 @@
             
               <div class="markdown-body">
                 
-                <h1 id="1-问题"><a href="#1-问题" class="headerlink" title="1 问题"></a>1 问题</h1><p>文件系统显示使用1.4T容量，实际使用1T左右</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> btrfs filesystem usage ./<br>Overall:<br>        Device size:                                         3.64TiB<br>        Deviceiallocated:                                3.47TiB<br>        Device unallocated:                            168.00GiB<br>        Device missing:                                   0.00B<br>        Device slack:                                       0.00B<br>        Used:                                                   2.82TiB<br>        Free (estimated):                                 412.29GiB           (min: 412.29GiB)<br>        Free (statfs,<span class="hljs-built_in">df</span>):                                    412.29GiB<br>        Data ratio:                                           2.00<br>        Metadata ratio:                                   2.00<br>        Global reserve:                                    512.00MiB          (used: 0.00B)<br>        Multiple profiles:                                 no<br>Data ,RAID1: Size: 1.73TiB, Used: 1.41TiB (81.47%)<br>        /dev/nvme1n1p2                                1.73TiB<br>        /dev/nvme2n1p2                                1.73TiB<br>Metadata RAID1: size: 6.00GiB, Used: 2.01GiB (33.52%)<br>        /dev/nvme1n1p2                                6.00GiB<br>        /dev/nvme2n1p2                                6.00GiB<br><br><span class="hljs-built_in">sudo</span> btrfs filesystem <span class="hljs-built_in">df</span> ./<br>Data, RAID1:  total =1.73TiB used=1.41TiB<br>System, RAID1: total=8.00MiB, used=368.00KiB<br>Metadata, RAID1: total=6.00GiB, used=2.01GiB<br>GlobalReserve, single: total=512.00MiB, used=0.00B<br></code></pre></td></tr></table></figure>
+                <blockquote>
+<p>Tip: <a target="_blank" rel="noopener" href="https://openwares.net/2012/04/26/reduce-qcow2-image-size-kvm/">原文位置</a>  </p>
+</blockquote>
+<p>虚拟磁盘文件占用的空间会越来越大,就算从客户机里面删除了很多文件,但这些空间并未释放出来,qcow2文件仍然占用大量的主机存储空间。</p>
+<p>虽然qcow2有一个特点,客户机需要时才分配存储空间,这工作的一直很好。但是当从客户机删除了很多文件,释放了很多空间时,从KVM主机端完全看不到qcow2虚拟磁盘文件有变小的迹象。这是因为现在的文件系统都有一个特点,删除文件时并没有真正的清除文件的内容,只是简单的做了标记,这样删除文件会很迅速,只有当用到这些空间时才重新写入新的数据。这也是反删除甚至反格式化软件存在的基础。所以要想缩小qcow2虚拟磁盘文件的大小,就要真正释放这些未使用的空间才可以。</p>
+<p>不同的客户机类型有不同解决方式,基本思路就是用0填充未使用的客户机磁盘空间,然后用qemu-img转换磁盘镜像文件,转换后的磁盘镜像文件将只包含所有已使用的磁盘空间。</p>
+<h1 id="1-linux客户机"><a href="#1-linux客户机" class="headerlink" title="1 linux客户机"></a>1 linux客户机</h1><h2 id="1-使用dd命令将客户机未使用的磁盘空间用0填满"><a href="#1-使用dd命令将客户机未使用的磁盘空间用0填满" class="headerlink" title="1 使用dd命令将客户机未使用的磁盘空间用0填满"></a>1 使用dd命令将客户机未使用的磁盘空间用0填满</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-variable">$dd</span> <span class="hljs-keyword">if</span>=/dev/zero of=~/junk<br><span class="hljs-built_in">dd</span>: writing to `/home/***/junk’: No space left on device<br><span class="hljs-variable">$rm</span> junk<br></code></pre></td></tr></table></figure>
+<p>关闭客户机，转换磁盘镜像文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-variable">$qemu</span>-img convert -O qcow2 debian.qcow2 debian_new.qcow2<br></code></pre></td></tr></table></figure>
 
-<p>实际存储容量：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">du</span> -shx /<br>187G           /<br><br><span class="hljs-built_in">sudo</span> du-shx /home/<br>118G           /home/<br><br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">du</span> -shx /home/1.worisur<br>583G           /home/1.worisur<br><br><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">du</span> -shx /home/2.<span class="hljs-built_in">users</span><br>118G           /home/2.<span class="hljs-built_in">users</span><br></code></pre></td></tr></table></figure>
+<p>转换完成后可以看到debian_new.qcow2占用的KVM主机存储空间与客户机使用的磁盘空间基本是一致的。然后用新的磁盘镜像文件debian_new.qcow2启动客户机即可。</p>
+<h1 id="2-windows客户机"><a href="#2-windows客户机" class="headerlink" title="2 windows客户机"></a>2 windows客户机</h1><p>删除不需要的文件,清理系统垃圾,然后整理磁盘碎片</p>
+<p>下载SDelete,借助sdelete用0来填充未使用硬盘空间</p>
+<p>查看sdelete帮助</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">C:\&gt;sdelete<br>SDelete - Secure Delete v1.6<br>Copyright (C) 1999-2010 Mark Russinovich<br>Sysinternals - www.sysinternals.com<br>usage: sdelete.exe [-p passes] [-s] [-q] …<br>sdelete.exe [-p passes] [-z-c] [drive letter] …<br>-a Remove Read-Only attribute<br>-c Clean free space<br>-p passes Specifies number of overwrite passes (default is 1)<br>-q Don’t <span class="hljs-built_in">print</span> errors (Quiet)<br>-s or -r Recurse subdirectories<br>-z Zero free space (good <span class="hljs-keyword">for</span> virtual disk optimization)<br></code></pre></td></tr></table></figure>
 
-<h1 id="2-问题解决"><a href="#2-问题解决" class="headerlink" title="2 问题解决"></a>2 问题解决</h1><p>可能是文件碎片导致的，尝试碎片整理，问题解决：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> btrfs filesystem defragment -r /home/1.worisur<br></code></pre></td></tr></table></figure>
-
-<p>磁盘容量使用情况缩小，但是多了Unallocated部分，网上说这部发后续会自动使用。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> btrfs filesystem usage ./<br>...<br>Unallocated:<br>/dev/nvme1n1p2          384.78GiB<br>/dev/nvme2n1p2          384.78GiB<br></code></pre></td></tr></table></figure>
-
+<p>用0填充C分区空闲区域</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">C:\&gt;sdelete -z c<br></code></pre></td></tr></table></figure>
+<p>关闭客户机</p>
+<h1 id="3-最后在KVM主机上转换qcow2磁盘镜像文件"><a href="#3-最后在KVM主机上转换qcow2磁盘镜像文件" class="headerlink" title="3 最后在KVM主机上转换qcow2磁盘镜像文件"></a>3 最后在KVM主机上转换qcow2磁盘镜像文件</h1><p>$qemu-img convert -O qcow2 windows.qcow2 windows_new.qcow2<br>转换完成后可以看到windows_new.qcow2占用的KVM主机存储空间与客户机使用的磁盘空间基本是一致的。然后用新的磁盘镜像文件windows_new.qcow2启动客户机即可。</p>
 
                 
               </div>
@@ -319,8 +327,15 @@
     
       <span class="category-chain">
         
-  <a href="/categories/btrfs/" class="category-chain-item">btrfs</a>
+  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
   
+  
+    <span>></span>
+    
+  <a href="/categories/Linux/kvm/" class="category-chain-item">kvm</a>
+  
+  
+
   
 
       </span>
@@ -334,7 +349,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/btrfs/" class="print-no-link">#btrfs</a>
+        <a href="/tags/Linux/" class="print-no-link">#Linux</a>
+      
+        <a href="/tags/kvm/" class="print-no-link">#kvm</a>
       
     </div>
   
@@ -346,8 +363,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>btrfs空间占用问题解决</div>
-      <div>https://worisur.github.io/2024/12/11/2024-12-11.btrfs空间占用问题解决/</div>
+      <div>qcow2格式磁盘压缩(转载)</div>
+      <div>https://worisur.github.io/2025/01/18/2025-01-18.qcow2格式磁盘压缩/</div>
     </div>
     <div class="license-meta">
       
@@ -359,7 +376,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年12月11日</div>
+          <div>2025年1月18日</div>
         </div>
       
       
@@ -391,18 +408,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/01/18/2025-01-18.qcow2%E6%A0%BC%E5%BC%8F%E7%A3%81%E7%9B%98%E5%8E%8B%E7%BC%A9/" title="qcow2格式磁盘压缩(转载)">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">qcow2格式磁盘压缩(转载)</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/12/11/2024-12-11.kvm%E5%8D%95%E6%98%BE%E5%8D%A1%E7%9B%B4%E9%80%9A(%E4%BA%8C)/" title="kvm单显卡直通（二）">
-                        <span class="hidden-mobile">kvm单显卡直通（二）</span>
+                      <a href="/2024/12/11/2024-12-11.btrfs%E7%A9%BA%E9%97%B4%E5%8D%A0%E7%94%A8%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" title="btrfs空间占用问题解决">
+                        <span class="hidden-mobile">btrfs空间占用问题解决</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
