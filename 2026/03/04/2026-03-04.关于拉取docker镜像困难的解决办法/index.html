@@ -19,13 +19,13 @@
   <meta name="author" content="worisur">
   <meta name="keywords" content="">
   
-    <meta name="description" content="kvm、qcow2">
+    <meta name="description" content="docker、代理">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>qcow2格式磁盘压缩(转载) - worisur&#39;s blog</title>
+  <title>拉取docker镜像困难的解决办法 - worisur&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -202,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="qcow2格式磁盘压缩(转载)"></span>
+            <span id="subtitle" data-typed-text="拉取docker镜像困难的解决办法"></span>
           
         </div>
 
@@ -213,8 +213,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-01-18 11:19" pubdate>
-          2025年1月18日 上午
+        <time datetime="2026-03-04 11:19" pubdate>
+          2026年3月4日 上午
         </time>
       </span>
     
@@ -226,7 +226,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          614 字
+          448 字
         
       </span>
     
@@ -238,7 +238,7 @@
         
         
           <!-- compatible with older versions-->
-          6 分钟
+          4 分钟
         
       </span>
     
@@ -275,13 +275,13 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">qcow2格式磁盘压缩(转载)</h1>
+            <h1 id="seo-header">拉取docker镜像困难的解决办法</h1>
             
               <p id="updated-time" class="note note-info" style="">
                 
                   
                     <!-- compatible with older versions-->
-                    本文最后更新于：2025年1月18日 中午
+                    本文最后更新于：2026年3月4日 中午
                   
                 
               </p>
@@ -290,25 +290,30 @@
               <div class="markdown-body">
                 
                 <blockquote>
-<p>Tip: <a target="_blank" rel="noopener" href="https://openwares.net/2012/04/26/reduce-qcow2-image-size-kvm/">原文位置</a>  </p>
+<p>Tip: 关于docker镜像拉取特别困难真的要吐槽一下，国内镜像加速器没一个好使的。  </p>
 </blockquote>
-<p>虚拟磁盘文件占用的空间会越来越大,就算从客户机里面删除了很多文件,但这些空间并未释放出来,qcow2文件仍然占用大量的主机存储空间。    </p>
-<p>虽然qcow2有一个特点,客户机需要时才分配存储空间,这工作的一直很好。但是当从客户机删除了很多文件,释放了很多空间时,从KVM主机端完全看不到qcow2虚拟磁盘文件有变小的迹象。这是因为现在的文件系统都有一个特点,删除文件时并没有真正的清除文件的内容,只是简单的做了标记,这样删除文件会很迅速,只有当用到这些空间时才重新写入新的数据。这也是反删除甚至反格式化软件存在的基础。所以要想缩小qcow2虚拟磁盘文件的大小,就要真正释放这些未使用的空间才可以。</p>
-<p>不同的客户机类型有不同解决方式,基本思路就是用0填充未使用的客户机磁盘空间,然后用qemu-img转换磁盘镜像文件,转换后的磁盘镜像文件将只包含所有已使用的磁盘空间。</p>
-<h1 id="1-linux客户机"><a href="#1-linux客户机" class="headerlink" title="1 linux客户机"></a>1 linux客户机</h1><h2 id="1-使用dd命令将客户机未使用的磁盘空间用0填满"><a href="#1-使用dd命令将客户机未使用的磁盘空间用0填满" class="headerlink" title="1 使用dd命令将客户机未使用的磁盘空间用0填满"></a>1 使用dd命令将客户机未使用的磁盘空间用0填满</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-variable">$dd</span> <span class="hljs-keyword">if</span>=/dev/zero of=~/junk<br><span class="hljs-built_in">dd</span>: writing to `/home/***/junk’: No space left on device<br><span class="hljs-variable">$rm</span> junk<br></code></pre></td></tr></table></figure>
-<p>关闭客户机，转换磁盘镜像文件</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-variable">$qemu</span>-img convert -O qcow2 debian.qcow2 debian_new.qcow2<br></code></pre></td></tr></table></figure>
+<h1 id="1-早期解决方案-PWD"><a href="#1-早期解决方案-PWD" class="headerlink" title="1 早期解决方案 PWD"></a>1 早期解决方案 <code>PWD</code></h1><p>有这么一个用来学习的网站 <a target="_blank" rel="noopener" href="https://labs.play-with-docker.com/">PWD</a> ,可以ssh连接，作为中转把下载好的镜像拿下来用，26年3月这个网站停止服务了。</p>
+<h1 id="2-解决方案1：创建docker代理文件（失败）"><a href="#2-解决方案1：创建docker代理文件（失败）" class="headerlink" title="2 解决方案1：创建docker代理文件（失败）"></a>2 解决方案1：创建docker代理文件（失败）</h1><p>我用的 TUN 模式，按道理来说不用创建这个文件也能做到无痛代理，但是似乎并没有生效。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> vim /etc/systemd/system/docker.service.d/http-proxy.conf<br><br>写入以下内容：<br><br>[Service]<br>Environment=<span class="hljs-string">&quot;HTTP_PROXY=http://127.0.0.1:20171&quot;</span><br>Environment=<span class="hljs-string">&quot;HTTPS_PROXY=http://127.0.0.1:20171&quot;</span><br>Environment=<span class="hljs-string">&quot;NO_PROXY=localhost,127.0.0.1,docker-registry.somecorporation.com&quot;</span><br><br>加载并重启：<br><br>$ <span class="hljs-built_in">sudo</span> systemctl daemon-reload<br>$ <span class="hljs-built_in">sudo</span> systemctl restart docker<br><br></code></pre></td></tr></table></figure>
 
-<p>转换完成后可以看到debian_new.qcow2占用的KVM主机存储空间与客户机使用的磁盘空间基本是一致的。然后用新的磁盘镜像文件debian_new.qcow2启动客户机即可。</p>
-<h1 id="2-windows客户机"><a href="#2-windows客户机" class="headerlink" title="2 windows客户机"></a>2 windows客户机</h1><p>删除不需要的文件,清理系统垃圾,然后整理磁盘碎片</p>
-<p>下载SDelete,借助sdelete用0来填充未使用硬盘空间</p>
-<p>查看sdelete帮助</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">C:\&gt;sdelete<br>SDelete - Secure Delete v1.6<br>Copyright (C) 1999-2010 Mark Russinovich<br>Sysinternals - www.sysinternals.com<br>usage: sdelete.exe [-p passes] [-s] [-q] …<br>sdelete.exe [-p passes] [-z-c] [drive letter] …<br>-a Remove Read-Only attribute<br>-c Clean free space<br>-p passes Specifies number of overwrite passes (default is 1)<br>-q Don’t <span class="hljs-built_in">print</span> errors (Quiet)<br>-s or -r Recurse subdirectories<br>-z Zero free space (good <span class="hljs-keyword">for</span> virtual disk optimization)<br></code></pre></td></tr></table></figure>
+<p>可以通过docker查看是否生效：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ docker info | grep -i proxy<br><br> HTTP Proxy: http://127.0.0.1:20171<br> HTTPS Proxy: http://127.0.0.1:20171<br> No Proxy: localhost,127.0.0.1,docker-registry.somecorporation.com<br><br></code></pre></td></tr></table></figure>
 
-<p>用0填充C分区空闲区域</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">C:\&gt;sdelete -z c<br></code></pre></td></tr></table></figure>
-<p>关闭客户机</p>
-<h1 id="3-最后在KVM主机上转换qcow2磁盘镜像文件"><a href="#3-最后在KVM主机上转换qcow2磁盘镜像文件" class="headerlink" title="3 最后在KVM主机上转换qcow2磁盘镜像文件"></a>3 最后在KVM主机上转换qcow2磁盘镜像文件</h1><p>$qemu-img convert -O qcow2 windows.qcow2 windows_new.qcow2<br>转换完成后可以看到windows_new.qcow2占用的KVM主机存储空间与客户机使用的磁盘空间基本是一致的。然后用新的磁盘镜像文件windows_new.qcow2启动客户机即可。</p>
+<p>生效了也下载不下来。</p>
+<h1 id="2-解决方案2：找新的中转，并尝试推送文件（速度感人）"><a href="#2-解决方案2：找新的中转，并尝试推送文件（速度感人）" class="headerlink" title="2 解决方案2：找新的中转，并尝试推送文件（速度感人）"></a>2 解决方案2：找新的中转，并尝试推送文件（速度感人）</h1><p>学习使用的网站真不少，这个最出名，应该不会关：<a target="_blank" rel="noopener" href="https://killercoda.com/">killercoda</a></p>
+<p>存在的问题有两个：</p>
+<ol>
+<li>创建的环境只能存在60分钟。</li>
+<li>怎么在有效时间内把镜像拿出来。</li>
+</ol>
+<h2 id="2-1-使用-Magic-Wormhole-端到端加密传输（速度极度慢，不推荐）"><a href="#2-1-使用-Magic-Wormhole-端到端加密传输（速度极度慢，不推荐）" class="headerlink" title="2.1 使用 Magic Wormhole 端到端加密传输（速度极度慢，不推荐）"></a>2.1 使用 Magic Wormhole 端到端加密传输（速度极度慢，不推荐）</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># Killercoda 通常是 Ubuntu 环境</span><br>$ <span class="hljs-built_in">sudo</span> apt update &amp;&amp; <span class="hljs-built_in">sudo</span> apt install magic-wormhole -y<br>$ wormhole send v2raya.tar.gz<br><br>此时终端会显示一个类似 4-purple-monkey-dishwasher 的短语。<br><br>在客户端接收：<br><br>$ wormhole receive 4-purple-monkey-dishwasher<br><br></code></pre></td></tr></table></figure>
+
+<h2 id="2-2-利用-Python-开启临时-Web-服务器（速度依旧很慢-有时候下载不下来）"><a href="#2-2-利用-Python-开启临时-Web-服务器（速度依旧很慢-有时候下载不下来）" class="headerlink" title="2.2 利用 Python 开启临时 Web 服务器（速度依旧很慢,有时候下载不下来）"></a>2.2 利用 Python 开启临时 Web 服务器（速度依旧很慢,有时候下载不下来）</h2><p>在需要传输文件当前目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ python3 -m http.server 8080<br><br>然后在 killercoda 打开 8080 端口下载，换个速度快一点的中转速度能快很多<br><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>存在问题：docker 镜像的 digest 码会变。</p>
+</blockquote>
 
                 
               </div>
@@ -327,12 +332,12 @@
     
       <span class="category-chain">
         
-  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  <a href="/categories/docker/" class="category-chain-item">docker</a>
   
   
     <span>></span>
     
-  <a href="/categories/Linux/kvm/" class="category-chain-item">kvm</a>
+  <a href="/categories/docker/%E4%BB%A3%E7%90%86/" class="category-chain-item">代理</a>
   
   
 
@@ -349,9 +354,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Linux/" class="print-no-link">#Linux</a>
+        <a href="/tags/docker/" class="print-no-link">#docker</a>
       
-        <a href="/tags/kvm/" class="print-no-link">#kvm</a>
+        <a href="/tags/%E4%BB%A3%E7%90%86/" class="print-no-link">#代理</a>
       
     </div>
   
@@ -363,8 +368,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>qcow2格式磁盘压缩(转载)</div>
-      <div>https://worisur.github.io/2025/01/18/2025-01-18.qcow2格式磁盘压缩/</div>
+      <div>拉取docker镜像困难的解决办法</div>
+      <div>https://worisur.github.io/2026/03/04/2026-03-04.关于拉取docker镜像困难的解决办法/</div>
     </div>
     <div class="license-meta">
       
@@ -376,7 +381,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年1月18日</div>
+          <div>2026年3月4日</div>
         </div>
       
       
@@ -408,18 +413,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/03/04/2026-03-04.%E5%85%B3%E4%BA%8E%E6%8B%89%E5%8F%96docker%E9%95%9C%E5%83%8F%E5%9B%B0%E9%9A%BE%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/" title="拉取docker镜像困难的解决办法">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">拉取docker镜像困难的解决办法</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/12/11/2024-12-11.btrfs%E7%A9%BA%E9%97%B4%E5%8D%A0%E7%94%A8%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" title="btrfs空间占用问题解决">
-                        <span class="hidden-mobile">btrfs空间占用问题解决</span>
+                      <a href="/2025/01/18/2025-01-18.qcow2%E6%A0%BC%E5%BC%8F%E7%A3%81%E7%9B%98%E5%8E%8B%E7%BC%A9/" title="qcow2格式磁盘压缩(转载)">
+                        <span class="hidden-mobile">qcow2格式磁盘压缩(转载)</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
