@@ -104,4 +104,5 @@ theme: fluid
 deploy:
   type: git
   repo: git@github.com:worisur/worisur.github.io.git,public
-
+  name: worisur
+  email: lux.worisur@163.com
