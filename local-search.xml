@@ -33,35 +33,6 @@
   
   
   <entry>
-    <title>同时推送测试 4</title>
-    <link href="/2026/03/04/2026-03-05.%E6%B5%8B%E8%AF%95/"/>
-    <url>/2026/03/04/2026-03-05.%E6%B5%8B%E8%AF%95/</url>
-    
-    <content type="html"><![CDATA[<blockquote><p>Tip: 关于docker镜像拉取特别困难真的要吐槽一下，国内镜像加速器没一个好使的。  </p></blockquote><h1 id="1-早期解决方案-PWD"><a href="#1-早期解决方案-PWD" class="headerlink" title="1 早期解决方案 PWD"></a>1 早期解决方案 <code>PWD</code></h1><p>有这么一个用来学习的网站 <a href="https://labs.play-with-docker.com/">PWD</a> ,可以ssh连接，作为中转把下载好的镜像拿下来用，26年3月这个网站停止服务了。</p><h1 id="2-解决方案1：创建docker代理文件（失败）"><a href="#2-解决方案1：创建docker代理文件（失败）" class="headerlink" title="2 解决方案1：创建docker代理文件（失败）"></a>2 解决方案1：创建docker代理文件（失败）</h1><p>我用的 TUN 模式，按道理来说不用创建这个文件也能做到无痛代理，但是似乎并没有生效。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> vim /etc/systemd/system/docker.service.d/http-proxy.conf<br><br>写入以下内容：<br><br>[Service]<br>Environment=<span class="hljs-string">&quot;HTTP_PROXY=http://127.0.0.1:20171&quot;</span><br>Environment=<span class="hljs-string">&quot;HTTPS_PROXY=http://127.0.0.1:20171&quot;</span><br>Environment=<span class="hljs-string">&quot;NO_PROXY=localhost,127.0.0.1,docker-registry.somecorporation.com&quot;</span><br><br>加载并重启：<br><br>$ <span class="hljs-built_in">sudo</span> systemctl daemon-reload<br>$ <span class="hljs-built_in">sudo</span> systemctl restart docker<br><br></code></pre></td></tr></table></figure><p>可以通过docker查看是否生效：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ docker info | grep -i proxy<br><br> HTTP Proxy: http://127.0.0.1:20171<br> HTTPS Proxy: http://127.0.0.1:20171<br> No Proxy: localhost,127.0.0.1,docker-registry.somecorporation.com<br><br></code></pre></td></tr></table></figure><p>生效了也下载不下来。</p><h1 id="2-解决方案2：找新的中转，并尝试推送文件（速度感人）"><a href="#2-解决方案2：找新的中转，并尝试推送文件（速度感人）" class="headerlink" title="2 解决方案2：找新的中转，并尝试推送文件（速度感人）"></a>2 解决方案2：找新的中转，并尝试推送文件（速度感人）</h1><p>学习使用的网站真不少，这个最出名，应该不会关：<a href="https://killercoda.com/">killercoda</a></p><p>存在的问题有两个：</p><ol><li>创建的环境只能存在60分钟。</li><li>怎么在有效时间内把镜像拿出来。</li></ol><h2 id="2-1-使用-Magic-Wormhole-端到端加密传输（速度极度慢，不推荐）"><a href="#2-1-使用-Magic-Wormhole-端到端加密传输（速度极度慢，不推荐）" class="headerlink" title="2.1 使用 Magic Wormhole 端到端加密传输（速度极度慢，不推荐）"></a>2.1 使用 Magic Wormhole 端到端加密传输（速度极度慢，不推荐）</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># Killercoda 通常是 Ubuntu 环境</span><br>$ <span class="hljs-built_in">sudo</span> apt update &amp;&amp; <span class="hljs-built_in">sudo</span> apt install magic-wormhole -y<br>$ wormhole send v2raya.tar.gz<br><br>此时终端会显示一个类似 4-purple-monkey-dishwasher 的短语。<br><br>在客户端接收：<br><br>$ wormhole receive 4-purple-monkey-dishwasher<br><br></code></pre></td></tr></table></figure><h2 id="2-2-利用-Python-开启临时-Web-服务器（速度依旧很慢-有时候下载不下来）"><a href="#2-2-利用-Python-开启临时-Web-服务器（速度依旧很慢-有时候下载不下来）" class="headerlink" title="2.2 利用 Python 开启临时 Web 服务器（速度依旧很慢,有时候下载不下来）"></a>2.2 利用 Python 开启临时 Web 服务器（速度依旧很慢,有时候下载不下来）</h2><p>在需要传输文件当前目录：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ python3 -m http.server 8080<br><br>然后在 killercoda 打开 8080 端口下载，换个速度快一点的中转速度能快很多<br><br></code></pre></td></tr></table></figure><blockquote><p>存在问题：docker 镜像的 digest 码会变。</p></blockquote>]]></content>
-    
-    
-    <categories>
-      
-      <category>docker</category>
-      
-      <category>代理</category>
-      
-    </categories>
-    
-    
-    <tags>
-      
-      <tag>docker</tag>
-      
-      <tag>代理</tag>
-      
-    </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>qcow2格式磁盘压缩(转载)</title>
     <link href="/2025/01/18/2025-01-18.qcow2%E6%A0%BC%E5%BC%8F%E7%A3%81%E7%9B%98%E5%8E%8B%E7%BC%A9/"/>
     <url>/2025/01/18/2025-01-18.qcow2%E6%A0%BC%E5%BC%8F%E7%A3%81%E7%9B%98%E5%8E%8B%E7%BC%A9/</url>
