@@ -19,13 +19,13 @@
   <meta name="author" content="worisur">
   <meta name="keywords" content="">
   
-    <meta name="description" content="docker、代理">
+    <meta name="description" content="docker、镜像">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>拉取docker镜像困难的解决办法 - worisur&#39;s blog</title>
+  <title>如何把v2raya和xray打包成一个docker镜像 - worisur&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -310,7 +310,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="拉取docker镜像困难的解决办法"></span>
+            <span id="subtitle" data-typed-text="如何把v2raya和xray打包成一个docker镜像"></span>
           
         </div>
 
@@ -321,8 +321,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-03-04 11:19" pubdate>
-          2026年3月4日 上午
+        <time datetime="2026-03-20 11:19" pubdate>
+          2026年3月20日 上午
         </time>
       </span>
     
@@ -334,7 +334,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          1.3k 字
+          1.7k 字
         
       </span>
     
@@ -346,7 +346,7 @@
         
         
           <!-- compatible with older versions-->
-          11 分钟
+          15 分钟
         
       </span>
     
@@ -385,13 +385,13 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">拉取docker镜像困难的解决办法</h1>
+            <h1 id="seo-header">如何把v2raya和xray打包成一个docker镜像</h1>
             
               <p id="updated-time" class="note note-info" style="">
                 
                   
                     <!-- compatible with older versions-->
-                    本文最后更新于：2026年3月4日 中午
+                    本文最后更新于：2026年3月20日 中午
                   
                 
               </p>
@@ -400,33 +400,17 @@
               <div class="markdown-body">
                 
                 <blockquote>
-<p>Tip: 关于docker镜像拉取特别困难真的要吐槽一下，国内镜像加速器没一个好使的。  </p>
+<p>Tip: 每天都在使用 v2rayA，我还要经常去看看 v2rayA 的官方 docker 镜像有没有更新，突然发现我可以自己打包镜像使用，这样就不用眼巴巴等着官方的镜像了，而且还可以把内核替换成 xray  </p>
 </blockquote>
-<h1 id="1-早期解决方案-PWD"><a href="#1-早期解决方案-PWD" class="headerlink" title="1 早期解决方案 PWD"></a>1 早期解决方案 <code>PWD</code></h1><p>有这么一个用来学习的网站 <a target="_blank" rel="noopener" href="https://labs.play-with-docker.com/">PWD</a> ,可以ssh连接，作为中转把下载好的镜像拿下来用，26年3月这个网站停止服务了。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 在中专主机上保存成压缩包</span><br>docker save -o v2raya_image.tar mzz2017/v2raya:latest<br><br><span class="hljs-comment"># 在本地主机上解压使用</span><br>docker load -i v2raya_image.tar<br></code></pre></td></tr></table></figure>
+<h1 id="1-构建-Dockerfile"><a href="#1-构建-Dockerfile" class="headerlink" title="1 构建 Dockerfile"></a>1 构建 Dockerfile</h1><p>本着省时间的原则，直接从项目地址下载最新编译好的二进制文件，安装时运行依赖参考了官方的 Dockerfile ，基本上每次更新的时候替换 v2raya 和 xray 的版本号就可以了。为了极致精简选择 Alpine Linux 作为底座，它基于 musl libc 和 busybox，极其轻量。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># --- 阶段一：下载/准备二进制文件 ---</span><br>FROM alpine AS fetcher<br>RUN apk add --no-cache curl wget unzip<br><br><span class="hljs-comment"># 定义版本（可以去 GitHub Release 页面找最新的）</span><br>ENV V2RAYA_VER=2.2.7.5<br>ENV XRAY_VER=26.2.6<br><br><span class="hljs-comment"># 下载 v2rayA 二进制</span><br>RUN wget https://github.com/v2rayA/v2rayA/releases/download/v<span class="hljs-variable">$&#123;V2RAYA_VER&#125;</span>/v2raya_linux_x64_<span class="hljs-variable">$&#123;V2RAYA_VER&#125;</span> -O /v2raya &amp;&amp; \<br>    <span class="hljs-built_in">chmod</span> +x /v2raya<br><br><span class="hljs-comment"># 下载 Xray 内核 (v2rayA 默认推荐使用 Xray)</span><br>RUN wget https://github.com/XTLS/Xray-core/releases/download/v<span class="hljs-variable">$&#123;XRAY_VER&#125;</span>/Xray-linux-64.zip &amp;&amp; \<br>    unzip Xray-linux-64.zip -d /xray-core &amp;&amp; \<br>    <span class="hljs-built_in">chmod</span> +x /xray-core/xray<br><br><span class="hljs-comment"># --- 阶段二：最终运行镜像 ---</span><br>FROM alpine<br>LABEL maintainer=<span class="hljs-string">&quot;v2raya&quot;</span><br><br><span class="hljs-comment"># 安装运行时依赖：iptables (透明代理必选), ca-certificates (HTTPS 必选)</span><br>RUN apk add --no-cache iptables ip6tables ca-certificates tzdata bash<br><br><span class="hljs-comment"># 从 fetcher 阶段拷贝二进制文件</span><br>COPY --from=fetcher /v2raya /usr/local/bin/v2raya<br>COPY --from=fetcher /xray-core/xray /usr/local/bin/xray<br>COPY --from=fetcher /xray-core/*.dat /usr/local/share/xray/<br><br><span class="hljs-comment"># 设置环境变量，告诉 v2rayA 内核在哪里</span><br>ENV V2RAYA_V2RAY_BIN=/usr/local/bin/xray<br>ENV V2RAYA_CONFIG=/etc/v2raya<br>ENV V2RAYA_NFTABLES_SUPPORT=off<br><br><span class="hljs-comment"># 暴露 Web 端口</span><br>EXPOSE 2017<br><br><span class="hljs-comment"># 启动命令</span><br>ENTRYPOINT [<span class="hljs-string">&quot;/usr/local/bin/v2raya&quot;</span>]<br></code></pre></td></tr></table></figure>
 
 
-<h1 id="2-解决方案1：创建docker代理文件（失败）"><a href="#2-解决方案1：创建docker代理文件（失败）" class="headerlink" title="2 解决方案1：创建docker代理文件（失败）"></a>2 解决方案1：创建docker代理文件（失败）</h1><p>我用的 TUN 模式，按道理来说不用创建这个文件也能做到无痛代理，但是似乎并没有生效。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> vim /etc/systemd/system/docker.service.d/http-proxy.conf<br><br>写入以下内容：<br><br>[Service]<br>Environment=<span class="hljs-string">&quot;HTTP_PROXY=http://127.0.0.1:20171&quot;</span><br>Environment=<span class="hljs-string">&quot;HTTPS_PROXY=http://127.0.0.1:20171&quot;</span><br>Environment=<span class="hljs-string">&quot;NO_PROXY=localhost,127.0.0.1,docker-registry.somecorporation.com&quot;</span><br><br>加载并重启：<br><br>$ <span class="hljs-built_in">sudo</span> systemctl daemon-reload<br>$ <span class="hljs-built_in">sudo</span> systemctl restart docker<br><br></code></pre></td></tr></table></figure>
+<h1 id="2-构建镜像"><a href="#2-构建镜像" class="headerlink" title="2 构建镜像"></a>2 构建镜像</h1><p>我用的 TUN 模式，按道理来说不用创建这个文件也能做到无痛代理，但是似乎并没有生效。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 网络流畅的话基本上没有什么报错</span><br>docker build -t my-v2raya:2.2.7.5-26.2.6 .<br><br></code></pre></td></tr></table></figure>
 
-<p>可以通过docker查看是否生效：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ docker info | grep -i proxy<br><br> HTTP Proxy: http://127.0.0.1:20171<br> HTTPS Proxy: http://127.0.0.1:20171<br> No Proxy: localhost,127.0.0.1,docker-registry.somecorporation.com<br><br></code></pre></td></tr></table></figure>
-
-<p>生效了也下载不下来。</p>
-<h1 id="2-解决方案2：找新的中转，并尝试推送文件（速度感人）"><a href="#2-解决方案2：找新的中转，并尝试推送文件（速度感人）" class="headerlink" title="2 解决方案2：找新的中转，并尝试推送文件（速度感人）"></a>2 解决方案2：找新的中转，并尝试推送文件（速度感人）</h1><p>学习使用的网站真不少，这个最出名，应该不会关：<a target="_blank" rel="noopener" href="https://killercoda.com/">killercoda</a></p>
-<p>存在的问题有两个：</p>
-<ol>
-<li>创建的环境只能存在60分钟。</li>
-<li>怎么在有效时间内把镜像拿出来。</li>
-</ol>
-<h2 id="2-1-使用-Magic-Wormhole-端到端加密传输（速度极度慢，不推荐）"><a href="#2-1-使用-Magic-Wormhole-端到端加密传输（速度极度慢，不推荐）" class="headerlink" title="2.1 使用 Magic Wormhole 端到端加密传输（速度极度慢，不推荐）"></a>2.1 使用 Magic Wormhole 端到端加密传输（速度极度慢，不推荐）</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># Killercoda 通常是 Ubuntu 环境</span><br>$ <span class="hljs-built_in">sudo</span> apt update &amp;&amp; <span class="hljs-built_in">sudo</span> apt install magic-wormhole -y<br>$ wormhole send v2raya.tar.gz<br><br>此时终端会显示一个类似 4-purple-monkey-dishwasher 的短语。<br><br>在客户端接收：<br><br>$ wormhole receive 4-purple-monkey-dishwasher<br><br></code></pre></td></tr></table></figure>
-
-<h2 id="2-2-利用-Python-开启临时-Web-服务器（速度依旧很慢-有时候下载不下来）"><a href="#2-2-利用-Python-开启临时-Web-服务器（速度依旧很慢-有时候下载不下来）" class="headerlink" title="2.2 利用 Python 开启临时 Web 服务器（速度依旧很慢,有时候下载不下来）"></a>2.2 利用 Python 开启临时 Web 服务器（速度依旧很慢,有时候下载不下来）</h2><p>在需要传输文件当前目录：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ python3 -m http.server 8080<br><br>然后在 killercoda 打开 8080 端口下载，换个速度快一点的中转速度能快很多<br><br></code></pre></td></tr></table></figure>
-
-<blockquote>
-<p>存在问题：docker 镜像的 digest 码会变。</p>
-</blockquote>
+<h1 id="3-运行容器"><a href="#3-运行容器" class="headerlink" title="3 运行容器"></a>3 运行容器</h1><p>因为 v2rayA 涉及修改系统路由（透明代理），所以运行报文必须带上 –privileged</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker run -d \<br> --restart=always \<br> --privileged \<br> --network=host \<br> --name v2raya \<br> -e V2RAYA_ADDRESS=10.0.0.1:2017 \<br> -v /lib/modules:/lib/modules:ro \<br> -v /etc/resolv.conf:/etc/resolv.conf \<br> -v /etc/v2raya:/etc/v2raya \<br> my-v2raya:2.2.7.5-26.2.6<br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -450,7 +434,7 @@
   
     <span>></span>
     
-  <a href="/categories/docker/%E4%BB%A3%E7%90%86/" class="category-chain-item">代理</a>
+  <a href="/categories/docker/%E9%95%9C%E5%83%8F/" class="category-chain-item">镜像</a>
   
   
 
@@ -469,7 +453,7 @@
       
         <a href="/tags/docker/" class="print-no-link">#docker</a>
       
-        <a href="/tags/%E4%BB%A3%E7%90%86/" class="print-no-link">#代理</a>
+        <a href="/tags/%E9%95%9C%E5%83%8F/" class="print-no-link">#镜像</a>
       
     </div>
   
@@ -481,8 +465,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>拉取docker镜像困难的解决办法</div>
-      <div>https://worisur.github.io/2026/03/04/2026-03-04.关于拉取docker镜像困难的解决办法/</div>
+      <div>如何把v2raya和xray打包成一个docker镜像</div>
+      <div>https://worisur.github.io/2026/03/20/2026-03-20.把v2raya和xray打包成docker镜像/</div>
     </div>
     <div class="license-meta">
       
@@ -494,7 +478,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2026年3月4日</div>
+          <div>2026年3月20日</div>
         </div>
       
       
@@ -526,18 +510,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/03/20/2026-03-20.%E6%8A%8Av2raya%E5%92%8Cxray%E6%89%93%E5%8C%85%E6%88%90docker%E9%95%9C%E5%83%8F/" title="如何把v2raya和xray打包成一个docker镜像">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">如何把v2raya和xray打包成一个docker镜像</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/01/18/2025-01-18.qcow2%E6%A0%BC%E5%BC%8F%E7%A3%81%E7%9B%98%E5%8E%8B%E7%BC%A9/" title="qcow2格式磁盘压缩(转载)">
-                        <span class="hidden-mobile">qcow2格式磁盘压缩(转载)</span>
+                      <a href="/2026/03/04/2026-03-04.%E5%85%B3%E4%BA%8E%E6%8B%89%E5%8F%96docker%E9%95%9C%E5%83%8F%E5%9B%B0%E9%9A%BE%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/" title="拉取docker镜像困难的解决办法">
+                        <span class="hidden-mobile">拉取docker镜像困难的解决办法</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
