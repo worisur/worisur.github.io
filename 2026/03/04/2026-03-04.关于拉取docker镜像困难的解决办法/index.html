@@ -334,7 +334,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          1.2k 字
+          1.3k 字
         
       </span>
     
@@ -346,7 +346,7 @@
         
         
           <!-- compatible with older versions-->
-          10 分钟
+          11 分钟
         
       </span>
     
@@ -403,6 +403,9 @@
 <p>Tip: 关于docker镜像拉取特别困难真的要吐槽一下，国内镜像加速器没一个好使的。  </p>
 </blockquote>
 <h1 id="1-早期解决方案-PWD"><a href="#1-早期解决方案-PWD" class="headerlink" title="1 早期解决方案 PWD"></a>1 早期解决方案 <code>PWD</code></h1><p>有这么一个用来学习的网站 <a target="_blank" rel="noopener" href="https://labs.play-with-docker.com/">PWD</a> ,可以ssh连接，作为中转把下载好的镜像拿下来用，26年3月这个网站停止服务了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 在中专主机上保存成压缩包</span><br>docker save -o v2raya_image.tar mzz2017/v2raya:latest<br><br><span class="hljs-comment"># 在本地主机上解压使用</span><br>docker load -i v2raya_image.tar<br></code></pre></td></tr></table></figure>
+
+
 <h1 id="2-解决方案1：创建docker代理文件（失败）"><a href="#2-解决方案1：创建docker代理文件（失败）" class="headerlink" title="2 解决方案1：创建docker代理文件（失败）"></a>2 解决方案1：创建docker代理文件（失败）</h1><p>我用的 TUN 模式，按道理来说不用创建这个文件也能做到无痛代理，但是似乎并没有生效。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> vim /etc/systemd/system/docker.service.d/http-proxy.conf<br><br>写入以下内容：<br><br>[Service]<br>Environment=<span class="hljs-string">&quot;HTTP_PROXY=http://127.0.0.1:20171&quot;</span><br>Environment=<span class="hljs-string">&quot;HTTPS_PROXY=http://127.0.0.1:20171&quot;</span><br>Environment=<span class="hljs-string">&quot;NO_PROXY=localhost,127.0.0.1,docker-registry.somecorporation.com&quot;</span><br><br>加载并重启：<br><br>$ <span class="hljs-built_in">sudo</span> systemctl daemon-reload<br>$ <span class="hljs-built_in">sudo</span> systemctl restart docker<br><br></code></pre></td></tr></table></figure>
 
