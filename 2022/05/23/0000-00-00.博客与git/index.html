@@ -92,7 +92,7 @@
 
 
   
-<meta name="generator" content="Hexo 6.3.0"></head>
+<meta name="generator" content="Hexo 8.1.2"></head>
 
 
 <body>
@@ -400,11 +400,22 @@
               <div class="markdown-body">
                 
                 <h1 id="删除文件"><a href="#删除文件" class="headerlink" title="删除文件"></a>删除文件</h1><ol>
-<li>克隆远程仓库到本地库,例如使用ssh方法：<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">git <span class="hljs-keyword">clone</span> <span class="hljs-title">git</span>@github.com:xxx/xxx.git<br></code></pre></td></tr></table></figure></li>
-<li>对需要删除的文件、文件夹进行如下操作:<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs stata">git <span class="hljs-keyword">rm</span> <span class="hljs-keyword">test</span>.txt (删除文件)<br>git <span class="hljs-keyword">rm</span> -r <span class="hljs-keyword">test</span> (删除文件夹)<br></code></pre></td></tr></table></figure></li>
-<li>提交修改<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs n1ql">git commit -m &quot;<span class="hljs-keyword">Delete</span> <span class="hljs-keyword">some</span> files.<span class="hljs-string">&quot;</span><br></code></pre></td></tr></table></figure></li>
-<li>将修改提交到远程仓库的xxx分支:<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs maxima">git <span class="hljs-built_in">push</span> <span class="hljs-built_in">origin</span> xxx<br></code></pre></td></tr></table></figure></li>
+<li>克隆远程仓库到本地库,例如使用ssh方法：</li>
 </ol>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">git <span class="hljs-keyword">clone</span> <span class="hljs-title">git</span>@github.com:xxx/xxx.git<br></code></pre></td></tr></table></figure>
+<ol start="2">
+<li>对需要删除的文件、文件夹进行如下操作:</li>
+</ol>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs stata">git <span class="hljs-keyword">rm</span> <span class="hljs-keyword">test</span>.txt (删除文件)<br>git <span class="hljs-keyword">rm</span> -r <span class="hljs-keyword">test</span> (删除文件夹)<br></code></pre></td></tr></table></figure>
+<ol start="3">
+<li>提交修改</li>
+</ol>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs n1ql">git commit -m &quot;<span class="hljs-keyword">Delete</span> <span class="hljs-keyword">some</span> files.<span class="hljs-string">&quot;</span><br></code></pre></td></tr></table></figure>
+<ol start="4">
+<li>将修改提交到远程仓库的xxx分支:</li>
+</ol>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs maxima">git <span class="hljs-built_in">push</span> <span class="hljs-built_in">origin</span> xxx<br></code></pre></td></tr></table></figure>
+
 <h1 id="删除远程仓库-但不删本地资源"><a href="#删除远程仓库-但不删本地资源" class="headerlink" title="删除远程仓库 但不删本地资源"></a>删除远程仓库 但不删本地资源</h1><p>把xxx.iml加到<code>.gitignore</code>里面忽略掉，然后提交使.gitignore生效，既:</p>
 <figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">git rm -r <span class="hljs-params">--cached</span> xxx.iml　　<span class="hljs-string">//-r</span> 是递归的意思   当最后面是文件夹的时候有用<br>git add xxx.iml　　　　　      <span class="hljs-string">//</span>若<span class="hljs-string">.gitignore</span>文件中已经忽略了xxx.iml则可以不用执行此句<br>git commit -m <span class="hljs-string">&quot;ignore xxx.xml&quot;</span><br>git push<br></code></pre></td></tr></table></figure>
 
@@ -427,6 +438,16 @@
 
 <span class="category-chains">
   
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/git/" class="category-chain-item">git</a>
+  
+  
+
+      </span>
+    
   
 </span>
 
